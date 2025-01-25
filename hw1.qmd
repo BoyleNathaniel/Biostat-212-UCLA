@@ -1,7 +1,7 @@
 ---
 title: "Biostat 212a Homework 1"
 subtitle: "Due Jan 28, 2025 @ 11:59PM"
-author: "YOUR NAME and UID"
+author: "Nathaniel Boyle and 006525153"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 format:
   html:
