@@ -56,12 +56,12 @@ where the expectation averages over the variability in $y_0$ and $\hat f$.
 ## ISL Exercise 2.4.3 (10% pts)
 
 We now revisit the bias-variance decomposition.
-(a) Provide a sketch of typical (squared) bias, variance, training error, test error, and Bayes (or irreducible) error curves, on a single plot, as we go from less fexible statistical learning methods
-towards more fexible approaches.
+(a) Provide a sketch of typical (squared) bias, variance, training error, test error, and Bayes (or irreducible) error curves, on a single plot, as we go from less flexible statistical learning methods
+towards more flexible approaches.
 
 The x-axis should represent
-the amount of fexibility in the method, and the y-axis should
-represent the values for each curve. There should be fve curves.
+the amount of flexibility in the method, and the y-axis should
+represent the values for each curve. There should be five curves.
 Make sure to label each one.
 (b) Explain why each of the five curves has the shape displayed in
 part (a).
@@ -76,10 +76,32 @@ fit <- lm(sales ~ TV, data = )
 
 You will now think of some real-life applications for statistical learning.
 
-(a) Describe three real-life applications in which classifcation might
-be useful. Describe the response, as well as the predictors. Is the
+(a) Describe three real-life applications in which classification might
+be useful.Describe the response, as well as the predictors. Is the
 goal of each application inference or prediction? Explain your
 answer.
+
+One useful example would be email spam detection. Having the ability to quickly sort through important emails and emails that will waste your time is a very practical for daily time management.
+
+The response in this case would be if the email itself is classified as spam or not. This could be a binary classification 1 = spam, 0 = not spam.
+
+The predictors in this case would be features in the emails themselves such as email address, certain keywords that advertisers use, metadata of the email itself (for example what time the email was sent).
+
+The goal in this case is prediction. The model will be introduced to new emails constantly and will need to make a new prediction if the incoming email is classified as spam or not, based on prior data patterns or other parameters set by the model.
+
+Another real-life application would be medical diagnosis. Certain cells in the human body could be classified as cancerous or benign. This is another example of binary classification.
+
+The response in this case could be "cancerous" or benign"
+
+Predictors would be various bio-statistical data pertaining to each patient such as age, blood levels, certain diets, concentration of exotic substances (radiation, carcinogenic chemicals)
+
+The goal in this case would again be prediction. We are taking trained data from previous patients that had confirmed classified cases of cancer or not, and then applying that learned model to new patient data to predict if this new patient has cancer or not.
+
+Last example given here could be in evaluating the effectiveness of a new drug.
+The response would be whether or not a patient has improved or not improved.
+Predictors in this case could be the dosage amount, overall health of the patients and other various demographics of the individuals that participate in the placebo (control) group vs that of the new drug (experimental) group.
+This would be an example of an inference. We are taking in new data and making an inference on how statistically significant is the new drug performing. We are not making any predictive outcomes for individuals that take this drug.
+
 
 (b) Describe three real-life applications in which regression might
 be useful. Describe the response, as well as the predictors. Is the
@@ -154,7 +176,7 @@ Boston
 
 ## ISL Exercise 3.7.3 (20% pts)
 
-Suppose we have a data set with fve predictors, X1 = GPA, X2 =
+Suppose we have a data set with five predictors, X1 = GPA, X2 =
 IQ, X3 = Level (1 for College and 0 for High School), X4 = Interaction between GPA and IQ, and X5 = Interaction between GPA and
 Level. The response is starting salary after graduation (in thousands
 of dollars). Suppose we use least squares to ft the model, and get
@@ -162,26 +184,26 @@ of dollars). Suppose we use least squares to ft the model, and get
 
 (a) Which answer is correct, and why?
 
-i. For a fxed value of IQ and GPA, high school graduates earn
+i. For a fixed value of IQ and GPA, high school graduates earn
 more, on average, than college graduates.
 
-ii. For a fxed value of IQ and GPA, college graduates earn
+ii. For a fixed value of IQ and GPA, college graduates earn
 more, on average, than high school graduates.
 
-iii. For a fxed value of IQ and GPA, high school graduates earn
+iii. For a fixed value of IQ and GPA, high school graduates earn
 more, on average, than college graduates provided that the
 GPA is high enough.
 
-iv. For a fxed value of IQ and GPA, college graduates earn
+iv. For a fixed value of IQ and GPA, college graduates earn
 more, on average, than high school graduates provided that
 the GPA is high enough.
 
 (b) Predict the salary of a college graduate with IQ of 110 and a
 GPA of 4.0.
 
-(c) True or false: Since the coeffcient for the GPA/IQ interaction
+(c) True or false: Since the coefficient for the GPA/IQ interaction
 term is very small, there is very little evidence of an interaction
-efect. Justify your answer.
+effect. Justify your answer.
 
 ## ISL Exercise 3.7.15 (20% pts)
 
@@ -192,7 +214,7 @@ crime rate is the response, and the other variables are the predictors.
 
 (a) For each predictor, ft a simple linear regression model to predict
 the response. Describe your results. In which of the models is
-there a statistically signifcant association between the predictor
+there a statistically significant association between the predictor
 and the response? Create some plots to back up your assertions.
 
 (b) Fit a multiple regression model to predict the response using
@@ -201,10 +223,10 @@ can we reject the null hypothesis H0 : βj = 0?
 
 (c) How do your results from (a) compare to your results from (b)?
 
-Create a plot displaying the univariate regression coeffcients
-from (a) on the x-axis, and the multiple regression coeffcients
+Create a plot displaying the univariate regression coefficients
+from (a) on the x-axis, and the multiple regression coefficients
 from (b) on the y-axis. That is, each predictor is displayed as a
-single point in the plot. Its coeffcient in a simple linear regression model is shown on the x-axis, and its coeffcient estimate
+single point in the plot. Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate
 in the multiple linear regression model is shown on the y-axis.
 
 (d) Is there evidence of non-linear association between any of the
