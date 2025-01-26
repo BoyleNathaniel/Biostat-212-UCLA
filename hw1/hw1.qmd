@@ -98,8 +98,11 @@ Predictors would be various bio-statistical data pertaining to each patient such
 The goal in this case would again be prediction. We are taking trained data from previous patients that had confirmed classified cases of cancer or not, and then applying that learned model to new patient data to predict if this new patient has cancer or not.
 
 Last example given here could be in evaluating the effectiveness of a new drug.
+
 The response would be whether or not a patient has improved or not improved.
+
 Predictors in this case could be the dosage amount, overall health of the patients and other various demographics of the individuals that participate in the placebo (control) group vs that of the new drug (experimental) group.
+
 This would be an example of an inference. We are taking in new data and making an inference on how statistically significant is the new drug performing. We are not making any predictive outcomes for individuals that take this drug.
 
 
@@ -108,8 +111,36 @@ be useful. Describe the response, as well as the predictors. Is the
 goal of each application inference or prediction? Explain your
 answer.
 
+One example that was brought up in our lectures was advertising and the effect it has on sales.
+
+The response here would the be sales figures themselves (how many units were sold, gross revenue).
+
+The predictors in this case would be the amount spent on advertising, the advertising contents (what is being advertised and how), what time of the year it is (some products will sell better in the Winter for example), and the price of the product itself.
+
+The goal here could depend on what we are trying to achieve. If we want to know how well a future product will do, we could be making a regression prediction. If we want to understand how well advertising expenditure effects previous products we would be doing a inference on that relationship (for example advertising revue vs sales revenue).
+
+Another real-life example would be in housing prices.
+
+The response would be the price of the house.
+
+Predictors would be various features of that house such as number of bedrooms, square footage, location, or other special extensions of the house like a pool.
+
+The goal here is prediction. We are aiming to predict the selling price of a house based on certain criteria. 
+
+Final example here would be for analyzing employee salaries.
+
+The response would be the employee salary.
+
+Predictors would be years of experience, education level, job position, location, an performance statistics if available.
+
+The goal here is to infer how various factors influence an employee's salary. We are aiming to understand the relationship between various factors instead of trying to make a specific prediction of an individual's salary.
+
 (c) Describe three real-life applications in which cluster analysis
 might be useful.
+
+One real-life example would be Image segmentation in computer vision projects. Often times we want to divide an image into different segments to help identify what is in a picture for example. There are a wide range of useful reasons to do this, one quick example is diagnosing diseases based of x-ray images or MRI scans by quickly sorting what is ordinary in the scan and what is abnormal.
+
+We could apply cluster analysis to customers in marketing as well. Grouping customers into clusters based of purchasing behavior or demographics can help companies identify various types of customers such as frequent shoppers or one-time buyers. These companies can than look into specifics per group and adjust various tactics such as targeted marking.
 
 
 ## ISL Exercise 2.4.10 (30% pts)
