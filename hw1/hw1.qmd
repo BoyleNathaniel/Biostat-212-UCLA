@@ -167,12 +167,12 @@ Read about the data set:
 How many rows are in this data set? How many columns? What
 do the rows and columns represent?
 506 Rows and 13 columns.
-Columns represent various features of a house such as crime rate, avaerage number of rooms per dwelling, mean distances to different employment centers, etc.
+Columns represent various features of a house such as crime rate, average number of rooms per dwelling, mean distances to different employment centers, etc.
 The rows represent each individual house.
 
 
 (b) Make some pairwise scatterplots of the predictors (columns) in
-this data set. Describe your fndings.
+this data set. Describe your findings.
 
 ```{r, evalue = F}
 #Load MASS library
@@ -200,27 +200,115 @@ cor_crim
 plot(Boston$crim, Boston$indus, main = "'Crime rate' vs 'non-retail business acres per town.'",
      xlab = "Crime Rate (crim)", ylab = "Average Number of Rooms (rm)")
 ```
+From a simple correlation matrix we can see a few positive correlations with crime per capita. "indus" the proportion of non-retail business acres per town, "nox" which is nitrogen oxides concentration (parts per 10 million), "age" "rad" "tax" "ptratio" and "lstat"
 
 (d) Do any of the census tracts of Boston appear to have particularly
-high crime rates? Tax rates? Pupil-teacher ratios? Comment on
-the range of each predictor.
+high crime rates? Tax rates? Pupil-teacher ratios?
+
+Comment on the range of each predictor.
+
+```{r, evalue = F}
+# Compare the ranges of crime rate, tax rate, and pupil-teacher ratio
+range(Boston$crim)
+range(Boston$tax)
+range(Boston$ptratio)
+# Pairwise scatter plot
+pairs(Boston[, c("crim", "tax", "ptratio")], main="Pairwise Scatter Plots")
+```
 
 (e) How many of the census tracts in this data set bound the Charles
 river?
+```{r, evalue = F}
+# Count how many census tracts are bound by the Charles River
+sum(Boston$chas == 1)
+```
+35 Census bound the Charles river.
 
 (f) What is the median pupil-teacher ratio among the towns in this
 data set?
 
-(g) Which census tract of Boston has lowest median value of owneroccupied homes? What are the values of the other predictors
-for that census tract, and how do those values compare to the
-overall ranges for those predictors? Comment on your fndings.
+```{r, evalue = F}
+# Calculate the median pupil-teacher ratio
+median(Boston$ptratio)
+```
+The median ratio is 19.05.
+
+(g) Which census tract of Boston has lowest median value of owner occupied homes?
+
+```{r, evalue = F}
+
+# Find the index of the census tract with the lowest median value of owner-occupied homes
+lowest_medv_index <- which.min(Boston$medv)
+# Display the details of the census tract with the lowest median value
+Boston[lowest_medv_index, ]
+```
+Census tract 399 has the lowest median value (5).
+
+What are the values of the other predictors
+for that census tract?
+
+From the code printed we see the following values for each predictor:
+
+crim: 38.3518
+zn: 0
+indus: 18.1
+chas: 0
+nox: 0.693
+rm: 5.453
+age: 100
+dis: 1.4896	
+rad: 24	
+tax: 666
+ptratio: 20.2
+lstat: 30.59
+
+How do those values compare to the
+overall ranges for those predictors?
+
+```{r, evalue = F}
+# Apply the range function to each predictor in the Boston dataset (excluding the target variable 'medv')
+range_df <- sapply(Boston, range)
+# Print the range of all predictors
+range_df
+```
+
+Comment on your findings.
+
+Crime in this census is on the low end
+Relatively high levels of nitrogen oxides concentration.
+Number of rooms is about on par with the range of rooms in this dataset.
+Oldest age compared to dataset.
+One of the closest to five employment centers.
+Higher end of tax per $10,000
+Very high ptratio value.
+Very high lstat value.
 
 (h) In this data set, how many of the census tracts average more than
 seven rooms per dwelling? More than eight rooms per dwelling?
 Comment on the census tracts that average more than eight
 rooms per dwelling.
 
+```{r, evalue = F}
+# Count how many census tracts have more than 7 rooms per dwelling
+more_than_seven_rooms <- sum(Boston$rm > 7)
 
+# Print the result
+more_than_seven_rooms
+
+# Count how many census tracts have more than 8 rooms per dwelling
+more_than_eight_rooms <- sum(Boston$rm > 8)
+
+# Print the result
+more_than_eight_rooms
+
+# Subset the census tracts with more than 8 rooms per dwelling
+more_than_eight_df <- Boston[Boston$rm > 8, ]
+
+# View the subset of census tracts with more than 8 rooms
+head(more_than_eight_df)
+```
+64 census tracts average more than seven rooms.
+13 average more than eight rooms.
 
 ## ISL Exercise 3.7.3 (20% pts)
 
