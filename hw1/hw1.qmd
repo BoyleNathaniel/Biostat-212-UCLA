@@ -305,7 +305,7 @@ more_than_eight_rooms
 more_than_eight_df <- Boston[Boston$rm > 8, ]
 
 # View the subset of census tracts with more than 8 rooms
-head(more_than_eight_df)
+(more_than_eight_df)
 ```
 64 census tracts average more than seven rooms.
 13 average more than eight rooms.
@@ -320,26 +320,35 @@ of dollars). Suppose we use least squares to ft the model, and get
 
 (a) Which answer is correct, and why?
 
-i. For a fixed value of IQ and GPA, high school graduates earn
-more, on average, than college graduates.
-
-ii. For a fixed value of IQ and GPA, college graduates earn
-more, on average, than high school graduates.
-
-iii. For a fixed value of IQ and GPA, high school graduates earn
-more, on average, than college graduates provided that the
-GPA is high enough.
-
 iv. For a fixed value of IQ and GPA, college graduates earn
 more, on average, than high school graduates provided that
 the GPA is high enough.
 
+Because there is a high positive coefficient attracted to the level of education,
+our model suggests that the level of education (being in college) is a strong
+predictor in having a higher salary (from βˆ3 = 35). The negative coefficient
+(βˆ5 = −10) for the interaction between GPA and level of education, suggests
+that a certain level of GPA is needed for the correlation of salary and 
+education level to be visualized. 
+
+
 (b) Predict the salary of a college graduate with IQ of 110 and a
 GPA of 4.0.
+
+$$ Salary=50+20⋅GPA+0.07⋅IQ+35⋅Level+0.01⋅(GPA×IQ)+(−10)⋅(GPA×Level)$$
+
+Plug in values
+$$ Level = 1, GPA = 4.0, IQ = 110$$
+
+$$ Salary=50+80+7.7+35+4.4−40=137.1 $$
 
 (c) True or false: Since the coefficient for the GPA/IQ interaction
 term is very small, there is very little evidence of an interaction
 effect. Justify your answer.
+
+False. We would need to perform a null-hypothesis test or report the standard error
+on this coefficient in order to evaluate how significant this value is.
+
 
 ## ISL Exercise 3.7.15 (20% pts)
 
@@ -353,9 +362,57 @@ the response. Describe your results. In which of the models is
 there a statistically significant association between the predictor
 and the response? Create some plots to back up your assertions.
 
+```{r, evalue = F}
+# Load the necessary libraries
+library(MASS)
+
+# Get the list of predictors (exclude 'CRIM' from the dataset)
+predictors <- setdiff(names(Boston), "crim")
+
+# Loop through each predictor and fit the linear model
+models <- lapply(predictors, function(predictor) {
+  lm(crim ~ get(predictor), data = Boston)
+})
+
+# Display summaries for each model
+model_summaries <- lapply(models, summary)
+print(model_summaries)
+
+# Create the scatter plot with the regression line
+
+plot_list <- lapply(predictors, function(predictor) {
+  ggplot(Boston, aes_string(x = predictor, y = "crim")) +
+    geom_point() +  # scatter plot
+    geom_smooth(method = "lm", se = FALSE, color = "blue") +  # regression line
+    labs(title = paste("Crime Rate vs", predictor),
+         x = predictor, 
+         y = "Per Capita Crime Rate (criim)") +
+    theme_minimal()
+})
+
+# Print plots to check the result
+print(plot_list[])
+
+
+```
+
 (b) Fit a multiple regression model to predict the response using
 all of the predictors. Describe your results. For which predictors
 can we reject the null hypothesis H0 : βj = 0?
+
+```{r, evalue = F}
+
+# Fit the multiple regression model using all predictors
+multiple_model <- lm(crim ~ ., data = Boston)
+
+# Display the summary of the model
+summary(multiple_model)
+```
+From this list of predictors we can reject the null for the following predictors:
+zn
+dis
+rad
+medv
 
 (c) How do your results from (a) compare to your results from (b)?
 
