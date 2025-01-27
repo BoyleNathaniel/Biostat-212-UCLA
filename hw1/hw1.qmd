@@ -5,6 +5,7 @@ author: "Nathaniel Boyle and 006525153"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 format:
   html:
+    mathjax: true 
     theme: cosmo
     embed-resources: true
     number-sections: true
@@ -419,7 +420,42 @@ medv
 Create a plot displaying the univariate regression coefficients
 from (a) on the x-axis, and the multiple regression coefficients
 from (b) on the y-axis. That is, each predictor is displayed as a
-single point in the plot. Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate
+single point in the plot.
+
+```{r, evalue = F}
+# Step 1: Fit the univariate regression models and extract coefficients
+predictors <- setdiff(names(Boston), "crim")  # Exclude the response variable 'CRIM'
+
+# Fit univariate models and extract coefficients
+univariate_coefs <- sapply(predictors, function(predictor) {
+  model <- lm(crim ~ get(predictor), data = Boston)
+  coef(model)[2]  # Extract the coefficient for the predictor (ignoring the intercept)
+})
+
+# Step 2: Fit the multiple regression model
+multiple_model <- lm(crim ~ ., data = Boston)
+
+# Extract the coefficients from the multiple regression model
+multiple_coefs <- coef(multiple_model)[-1]  # Exclude the intercept
+
+# Step 3: Create a data frame for plotting
+coef_data <- data.frame(
+  predictor = predictors,
+  univariate = univariate_coefs,
+  multiple = multiple_coefs
+)
+
+# Step 4: Create the plot
+ggplot(coef_data, aes(x = univariate, y = multiple)) +
+  geom_point() +  # Add points for each predictor
+  geom_text(aes(label = predictor), hjust = 0.5, vjust = 0.5) +  # Add labels with predictor names
+  labs(title = "Univariate vs. Multiple Regression Coefficients",
+       x = "Univariate Coefficients (Part a)",
+       y = "Multiple Regression Coefficients (Part b)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate
 in the multiple linear regression model is shown on the y-axis.
 
 (d) Is there evidence of non-linear association between any of the
@@ -427,10 +463,115 @@ predictors and the response? To answer this question, for each
 predictor X, ft a model of the form
 Y = β0 + β1X + β2X2 + β3X3 + ϵ.
 
+```{r, evalue = F}
+# Get the list of predictors (exclude 'CRIM' from the dataset)
+predictors <- setdiff(names(Boston), "crim")
+
+# Step 1: Fit a quadratic model for each predictor and extract coefficients
+quadratic_models <- lapply(predictors, function(predictor) {
+  lm(crim ~ get(predictor) + I(get(predictor)^2), data = Boston)
+})
+
+# Step 2: Display summaries for each quadratic model to check the significance of the quadratic term
+quadratic_summaries <- lapply(quadratic_models, summary)
+
+# Print summaries of each model
+quadratic_summaries
+```
 ## Bonus question (20% pts)
 
 For multiple linear regression, show that $R^2$ is equal to the correlation between the response vector $\mathbf{y} = (y_1, \ldots, y_n)^T$ and the fitted values $\hat{\mathbf{y}} = (\hat y_1, \ldots, \hat y_n)^T$. That is
 $$
 R^2 = 1 - \frac{\text{RSS}}{\text{TSS}} = [\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2.
 $$
+
+### Definitions:
+
+- **Total Sum of Squares (TSS):** This is the total variability in the response variable, which is defined as:
+  $$
+  \text{TSS} = \sum_{i=1}^{n} (y_i - \bar{y})^2
+  $$
+  where $\bar{y}$ is the mean of the response vector $\mathbf{y}$.
+
+- **Residual Sum of Squares (RSS):** This is the variability in the residuals (the difference between the observed and the fitted values), defined as:
+  $$
+  \text{RSS} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+  $$
+  where $\hat{y}_i$ is the fitted value for the $i$-th observation.
+
+- **Explained Sum of Squares (ESS):** This is the variability in the response that is explained by the fitted model. It is given by:
+  $$
+  \text{ESS} = \sum_{i=1}^{n} (\hat{y}_i - \bar{y})^2
+  $$
+  The total variability in $\mathbf{y}$ can be decomposed as:
+  $$
+  \text{TSS} = \text{ESS} + \text{RSS}
+  $$
+  Thus:
+  $$
+  R^2 = 1 - \frac{\text{RSS}}{\text{TSS}}
+  $$
+This is the definition of $ R^2 $, the proportion of variance in $ \mathbf{y} $ that is explained by the fitted model.
+
+### Relationship Between Correlation and R^2
+
+The square of the **correlation** between the response vector $ \mathbf{y} $ and the fitted values $ \hat{\mathbf{y}} $ is given by:
+$$
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \left( \frac{\text{Cov}(\mathbf{y}, \hat{\mathbf{y}})}{\sqrt{\text{Var}(\mathbf{y}) \cdot \text{Var}(\hat{\mathbf{y}})}} \right)^2
+$$
+where:
+
+- $ \text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) $ is the covariance between $ \mathbf{y} $ and $ \hat{\mathbf{y}} $.
+- $ \text{Var}(\mathbf{y}) $ is the variance of $ \mathbf{y} $.
+- $ \text{Var}(\hat{\mathbf{y}}) $ is the variance of the fitted values $\hat{\mathbf{y}} $.
+
+### Covariance Between \( \mathbf{y} \) and \( \hat{\mathbf{y}} \)
+
+The covariance between $ \mathbf{y} $ and $ \hat{\mathbf{y}} $ can be computed as:
+$$
+\text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})(\hat{y}_i - \bar{\hat{y}})
+$$
+where $ \bar{\hat{y}} $ is the mean of the fitted values. However, since the model is linear, $ \hat{\mathbf{y}} $ has the same mean as $ \mathbf{y} $, i.e., \( \bar{\hat{y}} = \bar{y} \).
+
+Thus, the covariance simplifies to:
+$$
+\text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})(\hat{y}_i - \bar{y})
+$$
+which is just the **explained sum of squares (ESS)** divided by \( n \):
+$$
+\text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\text{ESS}}{n}
+$$
+
+
+We compute the variances of $ \mathbf{y} $ and $ \hat{\mathbf{y}} $:
+
+- The variance of $ \mathbf{y} $ is:
+  $$
+  \text{Var}(\mathbf{y}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})^2 = \frac{\text{TSS}}{n}
+  $$
+
+- The variance of \( \hat{\mathbf{y}} \) is:
+  $$
+  \text{Var}(\hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (\hat{y}_i - \bar{y})^2 = \frac{\text{ESS}}{n}
+  $$
+
+###Correlation Between \( \mathbf{y} \) and \( \hat{\mathbf{y}} \)
+
+Now we can calculate the correlation:
+$$
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \left( \frac{\text{Cov}(\mathbf{y}, \hat{\mathbf{y}})}{\sqrt{\text{Var}(\mathbf{y}) \cdot \text{Var}(\hat{\mathbf{y}})}} \right)^2
+$$
+Substituting in the expressions for covariance and variance:
+$$
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \left( \frac{\frac{\text{ESS}}{n}}{\sqrt{\frac{\text{TSS}}{n} \cdot \frac{\text{ESS}}{n}}} \right)^2
+$$
+Simplifying:
+$$
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \frac{\text{ESS}^2}{\text{TSS} \cdot \text{ESS}} = \frac{\text{ESS}}{\text{TSS}} = 1 - \frac{\text{RSS}}{\text{TSS}}
+$$
+Thus, we have shown that:
+$$
+R^2 = [\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2
+$$
+
 
