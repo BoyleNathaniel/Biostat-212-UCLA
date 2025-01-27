@@ -3242,10 +3242,7 @@ window.Quarto = {
   <ul>
   <li><a href="#definitions" id="toc-definitions" class="nav-link" data-scroll-target="#definitions"><span class="header-section-number">7.1</span> Definitions:</a></li>
   <li><a href="#relationship-between-correlation-and-r2" id="toc-relationship-between-correlation-and-r2" class="nav-link" data-scroll-target="#relationship-between-correlation-and-r2"><span class="header-section-number">7.2</span> Relationship Between Correlation and R^2</a></li>
-  <li><a href="#step-2-covariance-between-and" id="toc-step-2-covariance-between-and" class="nav-link" data-scroll-target="#step-2-covariance-between-and"><span class="header-section-number">7.3</span> Step 2: Covariance Between ( ) and ( )</a></li>
-  <li><a href="#variance-of-and" id="toc-variance-of-and" class="nav-link" data-scroll-target="#variance-of-and"><span class="header-section-number">7.4</span> Variance of $ $ and $ $</a></li>
-  <li><a href="#step-4-correlation-between-and" id="toc-step-4-correlation-between-and" class="nav-link" data-scroll-target="#step-4-correlation-between-and"><span class="header-section-number">7.5</span> Step 4: Correlation Between ( ) and ( )</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">7.6</span> Conclusion:</a></li>
+  <li><a href="#covariance-between-and" id="toc-covariance-between-and" class="nav-link" data-scroll-target="#covariance-between-and"><span class="header-section-number">7.3</span> Covariance Between ( ) and ( )</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -4444,26 +4441,35 @@ R^2 = 1 - \frac{\text{RSS}}{\text{TSS}}
 <li>$ () $ is the variance of the fitted values $ $.</li>
 </ul>
 </section>
-<section id="step-2-covariance-between-and" class="level3" data-number="7.3">
-<h3 data-number="7.3" class="anchored" data-anchor-id="step-2-covariance-between-and"><span class="header-section-number">7.3</span> Step 2: Covariance Between ( ) and ( )</h3>
-<p>The covariance between ( ) and ( ) can be computed as: [ (, ) = _{i=1}^{n} (y_i - {y})(_i - {}) ] where ( {} ) is the mean of the fitted values. However, since the model is linear, ( ) is the projection of ( ) onto the space spanned by the predictors. This means that ( ) has the same mean as ( ), i.e., ( {} = {y} ).</p>
-<p>Thus, the covariance simplifies to: [ (, ) = _{i=1}^{n} (y_i - {y})(_i - {y}) ] which is just the <strong>explained sum of squares (ESS)</strong> divided by ( n ): [ (, ) = ]</p>
-</section>
-<section id="variance-of-and" class="level3" data-number="7.4">
-<h3 data-number="7.4" class="anchored" data-anchor-id="variance-of-and"><span class="header-section-number">7.4</span> Variance of $ $ and $ $</h3>
-<p>Next, we compute the variances of $ $ and $ $:</p>
+<section id="covariance-between-and" class="level3" data-number="7.3">
+<h3 data-number="7.3" class="anchored" data-anchor-id="covariance-between-and"><span class="header-section-number">7.3</span> Covariance Between ( ) and ( )</h3>
+<p>The covariance between $ $ and $ $ can be computed as: <span class="math display">\[
+\text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})(\hat{y}_i - \bar{\hat{y}})
+\]</span> where $ {} $ is the mean of the fitted values. However, since the model is linear, $ $ has the same mean as $ $, i.e., ( {} = {y} ).</p>
+<p>Thus, the covariance simplifies to: <span class="math display">\[
+\text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})(\hat{y}_i - \bar{y})
+\]</span> which is just the <strong>explained sum of squares (ESS)</strong> divided by ( n ): <span class="math display">\[
+\text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\text{ESS}}{n}
+\]</span></p>
+<p>We compute the variances of $ $ and $ $:</p>
 <ul>
-<li><p>The variance of ( ) is: [ () = _{i=1}^{n} (y_i - {y})^2 = ]</p></li>
-<li><p>The variance of ( ) is: [ () = _{i=1}^{n} (_i - {y})^2 = ]</p></li>
+<li><p>The variance of $ $ is: <span class="math display">\[
+\text{Var}(\mathbf{y}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})^2 = \frac{\text{TSS}}{n}
+\]</span></p></li>
+<li><p>The variance of ( ) is: <span class="math display">\[
+\text{Var}(\hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (\hat{y}_i - \bar{y})^2 = \frac{\text{ESS}}{n}
+\]</span></p></li>
 </ul>
-</section>
-<section id="step-4-correlation-between-and" class="level3" data-number="7.5">
-<h3 data-number="7.5" class="anchored" data-anchor-id="step-4-correlation-between-and"><span class="header-section-number">7.5</span> Step 4: Correlation Between ( ) and ( )</h3>
-<p>Now we can calculate the correlation: [ [(, )]^2 = ( )^2 ] Substituting in the expressions for covariance and variance: [ [(, )]^2 = ( )^2 ] Simplifying: [ [(, )]^2 = = = 1 - ] Thus, we have shown that: [ R^2 = [(, )]^2 ] which completes the proof.</p>
-</section>
-<section id="conclusion" class="level3" data-number="7.6">
-<h3 data-number="7.6" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">7.6</span> Conclusion:</h3>
-<p>We have demonstrated that the coefficient of determination ( R^2 ), which is the proportion of variance in the response variable explained by the model, is equal to the square of the correlation between the observed response vector ( ) and the fitted values ( ).</p>
+<p>###Correlation Between ( ) and ( )</p>
+<p>Now we can calculate the correlation: <span class="math display">\[
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \left( \frac{\text{Cov}(\mathbf{y}, \hat{\mathbf{y}})}{\sqrt{\text{Var}(\mathbf{y}) \cdot \text{Var}(\hat{\mathbf{y}})}} \right)^2
+\]</span> Substituting in the expressions for covariance and variance: <span class="math display">\[
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \left( \frac{\frac{\text{ESS}}{n}}{\sqrt{\frac{\text{TSS}}{n} \cdot \frac{\text{ESS}}{n}}} \right)^2
+\]</span> Simplifying: <span class="math display">\[
+[\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \frac{\text{ESS}^2}{\text{TSS} \cdot \text{ESS}} = \frac{\text{ESS}}{\text{TSS}} = 1 - \frac{\text{RSS}}{\text{TSS}}
+\]</span> Thus, we have shown that: <span class="math display">\[
+R^2 = [\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2
+\]</span></p>
 </section>
 </section>
 
