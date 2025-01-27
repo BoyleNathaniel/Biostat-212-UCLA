@@ -43,8 +43,62 @@ $$
 $$
 where the expectations averages over variations in both $X$ and $Y$. (Hint: condition on $X$.)
 
+### Define the Mean Squared Prediction Error
 
+The mean squared prediction error is given by:
 
+$$
+\operatorname{E}\{[Y - f(X)]^2\}.
+$$
+
+Expand the squared term inside the expectation:
+
+$$
+\operatorname{E}\{[Y - f(X)]^2\} = \operatorname{E}\left\{ Y^2 - 2Y f(X) + f(X)^2 \right\}.
+$$
+
+Operator is linear, separate the terms:
+
+$$
+\operatorname{E}\{[Y - f(X)]^2\} = \operatorname{E}(Y^2) - 2 f(X) \operatorname{E}(Y) + f(X)^2.
+$$
+
+$$
+\operatorname{E}\left\{ [Y - f(X)]^2 \Big| X \right\}.
+$$
+
+### Minimize the Conditional Expectation
+
+The conditional expectation:
+
+$$
+\operatorname{E}\left\{ [Y - f(X)]^2 \Big| X \right\} = \operatorname{E}\left\{ Y^2 - 2Y f(X) + f(X)^2 \Big| X \right\}.
+$$
+
+Using the properties of conditional expectation, we can break this up:
+
+$$
+\operatorname{E}\left\{ Y^2 - 2Y f(X) + f(X)^2 \Big| X \right\} = \operatorname{E}(Y^2 | X) - 2 f(X) \operatorname{E}(Y | X) + f(X)^2.
+$$
+
+### Minimize with Respect to $f(X)$
+
+Take the derivative of the conditional expectation with respect to $f(X)$:
+
+$$
+\frac{d}{df(X)} \left( \operatorname{E}(Y^2 | X) - 2 f(X) \operatorname{E}(Y | X) + f(X)^2 \right) = - 2 \operatorname{E}(Y | X) + 2 f(X).
+$$
+Set this derivative equal to zero to find the critical point:
+
+$$
+- 2 \operatorname{E}(Y | X) + 2 f(X) = 0.
+$$
+This simplifies to:
+
+$$
+f(X) = \operatorname{E}(Y | X).
+$$
+Therefore, the function $f(X) = \operatorname{E}(Y | X)$ minimizes the mean squared prediction error $\operatorname{E}\{[Y - f(X)]^2\}$.
 
 ### Bias-variance trade-off
 
@@ -53,6 +107,91 @@ $$
 \operatorname{E}\{[y_0 - \hat f(x_0)]^2\} = \underbrace{\operatorname{Var}(\hat f(x_0)) + [\operatorname{Bias}(\hat f(x_0))]^2}_{\text{MSE of } \hat f(x_0) \text{ for estimating } f(x_0)} + \underbrace{\operatorname{Var}(\epsilon)}_{\text{irreducible}},
 $$
 where the expectation averages over the variability in $y_0$ and $\hat f$.
+
+### The Regression Model
+
+The regression model is given by:
+
+$$
+y_0 = f(x_0) + \epsilon_0,
+$$
+
+where $f(x_0)$ is the true function value at $x_0$, and $\epsilon_0$ is the error term associated with the observation $y_0$. We assume that $\epsilon_0$ has zero mean and variance $\operatorname{Var}(\epsilon_0)$.
+
+The estimate of $f(x_0)$ based on some estimator $\hat f(x_0)$ is an approximation to the true function $f(x_0)$. The test error is the squared difference between the true value $y_0$ and the estimate $\hat f(x_0)$:
+
+$$
+\operatorname{E}\{[y_0 - \hat f(x_0)]^2\}.
+$$
+
+### Expand the Test Error
+
+Expanding the squared difference:
+
+$$
+\operatorname{E}\{[y_0 - \hat f(x_0)]^2\} = \operatorname{E}\{(y_0 - f(x_0) + f(x_0) - \hat f(x_0))^2\}.
+$$
+
+This expands to:
+
+$$
+\operatorname{E}\{[y_0 - f(x_0)]^2\} + \operatorname{E}\{[\hat f(x_0) - f(x_0)]^2\} + 2 \operatorname{E}\{(y_0 - f(x_0))(\hat f(x_0) - f(x_0))\}.
+$$
+
+### Simplify Each Term
+
+1. **First term: $\operatorname{E}\{[y_0 - f(x_0)]^2\}$**
+
+   Since $y_0 = f(x_0) + \epsilon_0$, we have:
+
+   $$
+   \operatorname{E}\{[y_0 - f(x_0)]^2\} = \operatorname{E}\{\epsilon_0^2\} = \operatorname{Var}(\epsilon_0).
+   $$
+
+   This is the **irreducible error**.
+
+2. **Second term: $\operatorname{E}\{[\hat f(x_0) - f(x_0)]^2\}$**
+
+   This term represents the **mean squared error (MSE)** of the estimator $\hat f(x_0)$ at $x_0$. It can be decomposed as:
+
+   $$
+   \operatorname{E}\{[\hat f(x_0) - f(x_0)]^2\} = \operatorname{Var}(\hat f(x_0)) + [\operatorname{Bias}(\hat f(x_0))]^2,
+   $$
+
+3. **Third term: $2 \operatorname{E}\{(y_0 - f(x_0))(\hat f(x_0) - f(x_0))\}$**
+
+   Since $y_0 - f(x_0) = \epsilon_0$, this term becomes:
+
+   $$
+   2 \operatorname{E}\{\epsilon_0 (\hat f(x_0) - f(x_0))\}.
+   $$
+
+   Assuming $\epsilon_0$ is independent of $\hat f(x_0)$ this expectation is zero:
+
+   $$
+   \operatorname{E}\{\epsilon_0 (\hat f(x_0) - f(x_0))\} = 0.
+   $$
+
+### Combine the Terms
+
+Now combining the results from the three terms, we have:
+
+$$
+\operatorname{E}\{[y_0 - \hat f(x_0)]^2\} = \operatorname{Var}(\epsilon_0) + \operatorname{Var}(\hat f(x_0)) + [\operatorname{Bias}(\hat f(x_0))]^2.
+$$
+
+Thus, the test error at $x_0$ can be decomposed into three components:
+
+- The **irreducible error** $\operatorname{Var}(\epsilon_0)$,
+- The **variance** of the estimator $\hat f(x_0)$ at $x_0 $, $\operatorname{Var}(\hat f(x_0))$,
+- The **squared bias** of the estimator $\hat f(x_0)$ at $x_0$, $[\operatorname{Bias}(\hat f(x_0))]^2$.
+
+Thus, we have:
+
+$$
+\operatorname{E}\{[y_0 - \hat f(x_0)]^2\} = \operatorname{Var}(\hat f(x_0)) + [\operatorname{Bias}(\hat f(x_0))]^2 + \operatorname{Var}(\epsilon_0).
+$$
+
 
 ## ISL Exercise 2.4.3 (10% pts)
 
@@ -64,14 +203,76 @@ The x-axis should represent
 the amount of flexibility in the method, and the y-axis should
 represent the values for each curve. There should be five curves.
 Make sure to label each one.
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Generate sample data for plotting
+flexibility <- seq(1, 10, by = 0.1)  # Increasing flexibility from left to right
+
+# Bias, Variance, and Error functions
+bias <- 1 / flexibility
+variance <- flexibility^2 / 20
+training_error <- 1 / flexibility + 0.5
+test_error <- (1 / flexibility) + (flexibility / 20)
+bayes_error <- rep(0.2, length(flexibility))
+
+# Create a data frame for plotting
+df <- data.frame(
+  flexibility = flexibility,
+  bias = bias,
+  variance = variance,
+  training_error = training_error,
+  test_error = test_error,
+  bayes_error = bayes_error
+)
+
+# Plot the curves using ggplot2
+ggplot(df, aes(x = flexibility)) +
+  geom_line(aes(y = bias, color = "Bias"), linewidth = 1.2) +
+  geom_line(aes(y = variance, color = "Variance"), linewidth = 1.2) +
+  geom_line(aes(y = training_error, color = "Training Error"), linewidth = 1.2) +
+  geom_line(aes(y = test_error, color = "Test Error"), linewidth = 1.2) +
+  geom_line(aes(y = bayes_error, color = "Bayes Error"), linewidth = 1.2) +
+  labs(
+    title = "Bias-Variance Decomposition",
+    x = "Model Flexibility",
+    y = "Error Value",
+    color = "Legend"
+  ) +
+  theme_minimal() +
+  scale_color_manual(values = c("blue", "red", "green", "purple", "black"))
+```
 (b) Explain why each of the five curves has the shape displayed in
 part (a).
 
-```{r, eval = F}
-#install.packages("tidyverse")
-library(tidyverse)
-fit <- lm(sales ~ TV, data = )
-```
+Bias Curve:
+The bias decreases as model flexibility increases.
+Bias refers to the error introduced by approximating the true underlying relationship with a model that is too simple or constrained.
+For less flexible models the model is too rigid to capture the true relationship, so it has a large bias. As flexibility increases the model can better approximate the true function, so the bias decreases.
+Eventually, as flexibility continues to increase, the model becomes very complex, and bias approaches zero because the model can fit the training data very well.
+Variance Curve:
+The variance increases as model flexibility increases, typically growing without bound.
+Variance measures how much the model’s predictions vary for different training sets.
+For less flexible models, there is less room for fluctuation, so the predictions are stable. Variance is low because the model's predictions are not overly sensitive to the specific data.
+As the model becomes more flexible, it starts to overfit to the training data, capturing noise and idiosyncrasies. This leads to more variability in the model's predictions on new data, causing an increase in variance.
+In extreme cases, very flexible models (e.g., high-degree polynomials or complex decision trees) fit the training data perfectly, but their predictions can fluctuate wildly with small changes in the data.
+Training Error Curve:
+The training error decreases as model flexibility increases.
+Training error is the error of the model on the same data used to fit it.
+For less flexible models, there’s a large mismatch between the model and the training data, which leads to a higher error.
+As flexibility increases, the model becomes better at fitting the training data, reducing training error. A more complex model can capture more of the underlying patterns and noise in the data, leading to lower error on the training set.
+At its extreme (with infinite flexibility), a model will often overfit, achieving zero training error because it perfectly fits the training set. However, this is not ideal, since overfitting leads to poor performance on unseen data (test data).
+Test Error Curve:
+The test error typically decreases, reaches a minimum, and then increases again as flexibility increase.
+Test error reflects how well the model generalizes to new, unseen data.
+At low flexibility, the model is too simple to capture the underlying structure of the data, leading to high bias and poor generalization. The test error is high because the model cannot adapt to the true relationship.
+As flexibility increases, the model better captures the true patterns in the data, reducing both bias and test error. Initially, test error decreases as the model becomes more flexible and is able to generalize better.
+Beyond a certain point, however, the model becomes too flexible, overfitting the training data. It starts to fit noise and small fluctuations that do not generalize to new data, which leads to an increase in test error. This is why the test error curve starts to rise again after reaching a minimum.
+Bayes Error Curve:
+The Bayes error is constant and does not change with flexibility.
+This is the lowest possible error that can be achieved, representing the inherent uncertainty in predicting the target variable, regardless of the model used. This error comes from factors like noise or the inherent randomness in the data.
 
 ## ISL Exercise 2.4.4 (10% pts)
 
@@ -176,8 +377,6 @@ The rows represent each individual house.
 this data set. Describe your findings.
 
 ```{r, evalue = F}
-#Load MASS library
-library(MASS)
 #Create simple pairwise scatterplots, -13 to exclude medv which is our response
 pairs(Boston[, -13], main = "Pairwise Scatterplots of Predictors")
 ```
@@ -189,6 +388,8 @@ plot(Boston$crim, Boston$rm, main = "Scatter Plot of 'crim' vs 'rm'",
 plot(Boston$crim, Boston$dis, main = "Scatter Plot of 'crim' vs 'dis'",
      xlab = "Crime Rate (crim)", ylab = "Average Number of Rooms (rm)")
 ```
+Some of the scatter plots suggest there is at least a positive correlation between
+certain predictors like dis and rm for predicting the median value of the house.
 
 (c) Are any of the predictors associated with per capita crime rate?
 If so, explain the relationship.
@@ -201,7 +402,8 @@ cor_crim
 plot(Boston$crim, Boston$indus, main = "'Crime rate' vs 'non-retail business acres per town.'",
      xlab = "Crime Rate (crim)", ylab = "Average Number of Rooms (rm)")
 ```
-From a simple correlation matrix we can see a few positive correlations with crime per capita. "indus" the proportion of non-retail business acres per town, "nox" which is nitrogen oxides concentration (parts per 10 million), "age" "rad" "tax" "ptratio" and "lstat"
+From a simple correlation matrix we can see a few positive correlations with crime per capita. "indus" the proportion of non-retail business acres per town, "nox" which is nitrogen oxides concentration (parts per 10 million), "age" "rad" "tax" "ptratio" and "lstat" are other positively correlated
+predictors for crime in this dataset.
 
 (d) Do any of the census tracts of Boston appear to have particularly
 high crime rates? Tax rates? Pupil-teacher ratios?
@@ -210,12 +412,30 @@ Comment on the range of each predictor.
 
 ```{r, evalue = F}
 # Compare the ranges of crime rate, tax rate, and pupil-teacher ratio
-range(Boston$crim)
-range(Boston$tax)
-range(Boston$ptratio)
-# Pairwise scatter plot
-pairs(Boston[, c("crim", "tax", "ptratio")], main="Pairwise Scatter Plots")
+summary(Boston$crim)
+summary(Boston$tax)
+summary(Boston$ptratio)
+
+#looking at 75th percentile (these are normally considered outlines)
+high_crim <- which(Boston$crim > quantile(Boston$crim, 0.75))
+high_tax <- which(Boston$tax > quantile(Boston$tax, 0.75))
+high_ptratio <- which(Boston$ptratio > quantile(Boston$ptratio, 0.75))
+
+# Print the census tracts with extreme values
+cat("Census tracts with high crime rates: ", high_crim, "\n")
+cat("Census tracts with high tax rates: ", high_tax, "\n")
+cat("Census tracts with high pupil-teacher ratios: ", high_ptratio, "\n")
+
+cat("Range of Boston Crime: ", range(Boston$crim), "\n")
+cat("Range of Boston Tax: ", range(Boston$tax), "\n")
+cat("Range of Boston ptratio: ", range(Boston$ptratio), "\n")
 ```
+The range of crime goes as low as almost zero (but never reaches zero) and the max is 88.9762
+The range of taxes goes as low as 187 and as high as 711
+The range of the ptratio value goes from 12.6 to 22
+
+These ranges are widely different from each other, so analyzing these predictors needs
+to be done carefully.
 
 (e) How many of the census tracts in this data set bound the Charles
 river?
@@ -317,7 +537,7 @@ Suppose we have a data set with five predictors, X1 = GPA, X2 =
 IQ, X3 = Level (1 for College and 0 for High School), X4 = Interaction between GPA and IQ, and X5 = Interaction between GPA and
 Level. The response is starting salary after graduation (in thousands
 of dollars). Suppose we use least squares to ft the model, and get
-βˆ0 = 50, βˆ1 = 20, βˆ2 = 0.07, βˆ3 = 35, βˆ4 = 0.01, βˆ5 = −10.
+$β^0 = 50$, $β^1 = 20$, $β^2 = 0.07$, $β^3 = 35$, $β^4 = 0.01$, $β^5 = −10$.
 
 (a) Which answer is correct, and why?
 
@@ -327,20 +547,17 @@ the GPA is high enough.
 
 Because there is a high positive coefficient attracted to the level of education,
 our model suggests that the level of education (being in college) is a strong
-predictor in having a higher salary (from βˆ3 = 35). The negative coefficient
-(βˆ5 = −10) for the interaction between GPA and level of education, suggests
+predictor in having a higher salary (from $β^3 = 35$). The negative coefficient
+($β^5 = −10$) for the interaction between GPA and level of education, suggests
 that a certain level of GPA is needed for the correlation of salary and 
 education level to be visualized. 
-
 
 (b) Predict the salary of a college graduate with IQ of 110 and a
 GPA of 4.0.
 
 $$ Salary=50+20⋅GPA+0.07⋅IQ+35⋅Level+0.01⋅(GPA×IQ)+(−10)⋅(GPA×Level)$$
-
 Plug in values
 $$ Level = 1, GPA = 4.0, IQ = 110$$
-
 $$ Salary=50+80+7.7+35+4.4−40=137.1 $$
 
 (c) True or false: Since the coefficient for the GPA/IQ interaction
@@ -364,9 +581,6 @@ there a statistically significant association between the predictor
 and the response? Create some plots to back up your assertions.
 
 ```{r, evalue = F}
-# Load the necessary libraries
-library(MASS)
-
 # Get the list of predictors (exclude 'CRIM' from the dataset)
 predictors <- setdiff(names(Boston), "crim")
 
@@ -375,14 +589,10 @@ models <- lapply(predictors, function(predictor) {
   lm(crim ~ get(predictor), data = Boston)
 })
 
-# Display summaries for each model
-model_summaries <- lapply(models, summary)
-print(model_summaries)
-
 # Create the scatter plot with the regression line
 
 plot_list <- lapply(predictors, function(predictor) {
-  ggplot(Boston, aes_string(x = predictor, y = "crim")) +
+  ggplot(Boston, aes(x = Boston[[predictor]], y = Boston$crim)) +
     geom_point() +  # scatter plot
     geom_smooth(method = "lm", se = FALSE, color = "blue") +  # regression line
     labs(title = paste("Crime Rate vs", predictor),
@@ -391,15 +601,35 @@ plot_list <- lapply(predictors, function(predictor) {
     theme_minimal()
 })
 
-# Print plots to check the result
-print(plot_list[])
+# Extract p-values from the model summaries
+p_values <- sapply(model_summaries, function(model_summary) {
+  coef(model_summary)[2, "Pr(>|t|)"]  # Extracting the p-value for the predictor (2nd row corresponds to predictor)
+})
+
+# Display p-values and check which predictors are significant
+significant_predictors <- names(p_values)[p_values < 0.05]
+cat("Statistically significant predictors are:", significant_predictors, "\n")
 
 
+# Print plots to check the result and display summaries for each model
+print(plot_list)
+print(model_summaries)
 ```
+
+Crime rate vs medv seems to suggest there is a negative correlation with the median value of homes
+ane the crime rate.
+Crime rate vs lstat also suggests there is a positive correlation with the lower status of the population (percent) and the crime rate.
+Crime rate vs distance might suggest a small negative correlation between crime and the distance
+to employment centers.
+Slight negative correlation bewteen crime rate and age of the home.
+Crime and nox might have a slightly positive correlation.
+Many of these scatter plots show a regression line, but looking at the plots directly the data
+tends to be stacked (lots of various crime data points for relatively few predictor values).
+
 
 (b) Fit a multiple regression model to predict the response using
 all of the predictors. Describe your results. For which predictors
-can we reject the null hypothesis H0 : βj = 0?
+can we reject the null hypothesis $H_0 : β_j = 0$?
 
 ```{r, evalue = F}
 
@@ -417,13 +647,16 @@ medv
 
 (c) How do your results from (a) compare to your results from (b)?
 
+Before our model was telling us all the predictors were significant.
+Now only a handful of them are found to be statistically significant.
+
 Create a plot displaying the univariate regression coefficients
 from (a) on the x-axis, and the multiple regression coefficients
 from (b) on the y-axis. That is, each predictor is displayed as a
 single point in the plot.
 
 ```{r, evalue = F}
-# Step 1: Fit the univariate regression models and extract coefficients
+# Fit the univariate regression models and extract coefficients
 predictors <- setdiff(names(Boston), "crim")  # Exclude the response variable 'CRIM'
 
 # Fit univariate models and extract coefficients
@@ -432,26 +665,26 @@ univariate_coefs <- sapply(predictors, function(predictor) {
   coef(model)[2]  # Extract the coefficient for the predictor (ignoring the intercept)
 })
 
-# Step 2: Fit the multiple regression model
+#Fit the multiple regression model
 multiple_model <- lm(crim ~ ., data = Boston)
 
 # Extract the coefficients from the multiple regression model
 multiple_coefs <- coef(multiple_model)[-1]  # Exclude the intercept
 
-# Step 3: Create a data frame for plotting
+#Create a data frame for plotting
 coef_data <- data.frame(
   predictor = predictors,
   univariate = univariate_coefs,
   multiple = multiple_coefs
 )
 
-# Step 4: Create the plot
+# Create the plot
 ggplot(coef_data, aes(x = univariate, y = multiple)) +
   geom_point() +  # Add points for each predictor
   geom_text(aes(label = predictor), hjust = 0.5, vjust = 0.5) +  # Add labels with predictor names
   labs(title = "Univariate vs. Multiple Regression Coefficients",
-       x = "Univariate Coefficients (Part a)",
-       y = "Multiple Regression Coefficients (Part b)") +
+       x = "Univariate Coefficients",
+       y = "Multiple Regression Coefficients") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
@@ -461,23 +694,26 @@ in the multiple linear regression model is shown on the y-axis.
 (d) Is there evidence of non-linear association between any of the
 predictors and the response? To answer this question, for each
 predictor X, ft a model of the form
-Y = β0 + β1X + β2X2 + β3X3 + ϵ.
+$Y = β^0 + β^1X + β^2X_2 + β^3X_3 + ϵ$.
 
 ```{r, evalue = F}
 # Get the list of predictors (exclude 'CRIM' from the dataset)
 predictors <- setdiff(names(Boston), "crim")
 
-# Step 1: Fit a quadratic model for each predictor and extract coefficients
+# Fit a quadratic model for each predictor and extract coefficients
 quadratic_models <- lapply(predictors, function(predictor) {
   lm(crim ~ get(predictor) + I(get(predictor)^2), data = Boston)
 })
 
-# Step 2: Display summaries for each quadratic model to check the significance of the quadratic term
+#Display summaries for each quadratic model to check the significance of the quadratic term
 quadratic_summaries <- lapply(quadratic_models, summary)
 
 # Print summaries of each model
 quadratic_summaries
 ```
+From the p values printed in the summary, there is statistically significant evidence
+to suggest that all predictors except for ptratio are non-linear with crime.
+
 ## Bonus question (20% pts)
 
 For multiple linear regression, show that $R^2$ is equal to the correlation between the response vector $\mathbf{y} = (y_1, \ldots, y_n)^T$ and the fitted values $\hat{\mathbf{y}} = (\hat y_1, \ldots, \hat y_n)^T$. That is
@@ -513,49 +749,49 @@ $$
   $$
 This is the definition of $ R^2 $, the proportion of variance in $ \mathbf{y} $ that is explained by the fitted model.
 
-### Relationship Between Correlation and R^2
+### Relationship Between Correlation and $R^2$
 
-The square of the **correlation** between the response vector $ \mathbf{y} $ and the fitted values $ \hat{\mathbf{y}} $ is given by:
+The square of the **correlation** between the response vector $\mathbf{y}$ and the fitted values $\hat{\mathbf{y}}$ is given by:
 $$
 [\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = \left( \frac{\text{Cov}(\mathbf{y}, \hat{\mathbf{y}})}{\sqrt{\text{Var}(\mathbf{y}) \cdot \text{Var}(\hat{\mathbf{y}})}} \right)^2
 $$
 where:
 
-- $ \text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) $ is the covariance between $ \mathbf{y} $ and $ \hat{\mathbf{y}} $.
-- $ \text{Var}(\mathbf{y}) $ is the variance of $ \mathbf{y} $.
-- $ \text{Var}(\hat{\mathbf{y}}) $ is the variance of the fitted values $\hat{\mathbf{y}} $.
+- $\text{Cov}(\mathbf{y}, \hat{\mathbf{y}})$ is the covariance between $\mathbf{y}$ and $\hat{\mathbf{y}}$.
+- $\text{Var}(\mathbf{y})$ is the variance of $\mathbf{y}$.
+- $\text{Var}(\hat{\mathbf{y}})$ is the variance of the fitted values $\hat{\mathbf{y}}$.
 
-### Covariance Between \( \mathbf{y} \) and \( \hat{\mathbf{y}} \)
+### Covariance Between $\mathbf{y}$ and $\hat{\mathbf{y}}$
 
-The covariance between $ \mathbf{y} $ and $ \hat{\mathbf{y}} $ can be computed as:
+The covariance between $\mathbf{y}$ and $\hat{\mathbf{y}}$ can be computed as:
 $$
 \text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})(\hat{y}_i - \bar{\hat{y}})
 $$
-where $ \bar{\hat{y}} $ is the mean of the fitted values. However, since the model is linear, $ \hat{\mathbf{y}} $ has the same mean as $ \mathbf{y} $, i.e., \( \bar{\hat{y}} = \bar{y} \).
+where $\bar{\hat{y}}$ is the mean of the fitted values. However, since the model is linear, $\hat{\mathbf{y}}$ has the same mean as $\mathbf{y}$.
 
 Thus, the covariance simplifies to:
 $$
 \text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})(\hat{y}_i - \bar{y})
 $$
-which is just the **explained sum of squares (ESS)** divided by \( n \):
+which is just the **explained sum of squares (ESS)** divided by $n$:
 $$
 \text{Cov}(\mathbf{y}, \hat{\mathbf{y}}) = \frac{\text{ESS}}{n}
 $$
 
 
-We compute the variances of $ \mathbf{y} $ and $ \hat{\mathbf{y}} $:
+We compute the variances of $\mathbf{y}$ and $\hat{\mathbf{y}}$:
 
-- The variance of $ \mathbf{y} $ is:
+- The variance of $\mathbf{y}$ is:
   $$
   \text{Var}(\mathbf{y}) = \frac{1}{n} \sum_{i=1}^{n} (y_i - \bar{y})^2 = \frac{\text{TSS}}{n}
   $$
 
-- The variance of \( \hat{\mathbf{y}} \) is:
+- The variance of $\hat{\mathbf{y}}$ is:
   $$
   \text{Var}(\hat{\mathbf{y}}) = \frac{1}{n} \sum_{i=1}^{n} (\hat{y}_i - \bar{y})^2 = \frac{\text{ESS}}{n}
   $$
 
-###Correlation Between \( \mathbf{y} \) and \( \hat{\mathbf{y}} \)
+### Correlation Between $\mathbf{y}$ and $\hat{\mathbf{y}}$
 
 Now we can calculate the correlation:
 $$
