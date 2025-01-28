@@ -254,22 +254,21 @@ For less flexible models the model is too rigid to capture the true relationship
 Eventually, as flexibility continues to increase, the model becomes very complex, and bias approaches zero because the model can fit the training data very well.
 
 Variance Curve:
-The variance increases as model flexibility increases, typically growing without bound.
-Variance measures how much the model’s predictions vary for different training sets.
-For less flexible models, there is less room for fluctuation, so the predictions are stable. Variance is low because the model's predictions are not overly sensitive to the specific data.
-As the model becomes more flexible, it starts to overfit to the training data, capturing noise and idiosyncrasies. This leads to more variability in the model's predictions on new data, causing an increase in variance.
+Variance increases as model flexibility increases.
+This measures how much the model’s predictions vary for different training sets.
+Less flexible models have less room for fluctuation, so the predictions are stable. Variance is low because the model's predictions are not overly sensitive to the specific data.
+As the model flexibility increases, overfitting occurs to the training data, capturing noise. This leads to more variability in the model's predictions on new data, causing an increase in variance.
 In extreme cases, very flexible models fit the training data perfectly, but their predictions can fluctuate wildly with small changes in the data.
 
 Training Error Curve:
 The training error decreases as model flexibility increases.
-Training error is the error of the model on the same data used to fit it.
 For less flexible models, there’s a large mismatch between the model and the training data, which leads to a higher error.
 As flexibility increases, the model becomes better at fitting the training data, reducing training error. A more complex model can capture more of the underlying patterns and noise in the data, leading to lower error on the training set.
-At its extreme (with infinite flexibility), a model will often overfit, achieving zero training error because it perfectly fits the training set. However, this is not ideal, since overfitting leads to poor performance on unseen data (test data).
+At its extreme a model will often overfit, achieving zero training error because it perfectly fits the training set. This is not ideal, since overfitting leads to poor performance on unseen data.
 
 Test Error Curve:
-The test error typically decreases, reaches a minimum, and then increases again as flexibility increase.
-Test error reflects how well the model generalizes to new, unseen data.
+The test error typically decreases, reaches a minimum, and then increases again as flexibility increases.
+This error reflects how well the model generalizes to new, unseen data.
 At low flexibility, the model is too simple to capture the underlying structure of the data, leading to high bias and poor generalization. The test error is high because the model cannot adapt to the true relationship.
 As flexibility increases, the model better captures the true patterns in the data, reducing both bias and test error. Initially, test error decreases as the model becomes more flexible and is able to generalize better.
 Beyond a certain point, the model becomes too flexible, which overfits the training data. This leads to an increase in test error.
@@ -622,11 +621,11 @@ print(model_summaries)
 ```
 
 Crime rate vs medv seems to suggest there is a negative correlation with the median value of homes
-ane the crime rate.
+and the crime rate.
 Crime rate vs lstat also suggests there is a positive correlation with the lower status of the population (percent) and the crime rate.
 Crime rate vs distance might suggest a small negative correlation between crime and the distance
 to employment centers.
-Slight negative correlation bewteen crime rate and age of the home.
+Slight negative correlation between crime rate and age of the home.
 Crime and nox might have a slightly positive correlation.
 Many of these scatter plots show a regression line, but looking at the plots directly the data
 tends to be stacked (lots of various crime data points for relatively few predictor values).
