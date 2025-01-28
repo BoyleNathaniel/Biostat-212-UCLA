@@ -252,24 +252,28 @@ The bias decreases as model flexibility increases.
 Bias refers to the error introduced by approximating the true underlying relationship with a model that is too simple or constrained.
 For less flexible models the model is too rigid to capture the true relationship, so it has a large bias. As flexibility increases the model can better approximate the true function, so the bias decreases.
 Eventually, as flexibility continues to increase, the model becomes very complex, and bias approaches zero because the model can fit the training data very well.
+
 Variance Curve:
 The variance increases as model flexibility increases, typically growing without bound.
 Variance measures how much the model’s predictions vary for different training sets.
 For less flexible models, there is less room for fluctuation, so the predictions are stable. Variance is low because the model's predictions are not overly sensitive to the specific data.
 As the model becomes more flexible, it starts to overfit to the training data, capturing noise and idiosyncrasies. This leads to more variability in the model's predictions on new data, causing an increase in variance.
-In extreme cases, very flexible models (e.g., high-degree polynomials or complex decision trees) fit the training data perfectly, but their predictions can fluctuate wildly with small changes in the data.
+In extreme cases, very flexible models fit the training data perfectly, but their predictions can fluctuate wildly with small changes in the data.
+
 Training Error Curve:
 The training error decreases as model flexibility increases.
 Training error is the error of the model on the same data used to fit it.
 For less flexible models, there’s a large mismatch between the model and the training data, which leads to a higher error.
 As flexibility increases, the model becomes better at fitting the training data, reducing training error. A more complex model can capture more of the underlying patterns and noise in the data, leading to lower error on the training set.
 At its extreme (with infinite flexibility), a model will often overfit, achieving zero training error because it perfectly fits the training set. However, this is not ideal, since overfitting leads to poor performance on unseen data (test data).
+
 Test Error Curve:
 The test error typically decreases, reaches a minimum, and then increases again as flexibility increase.
 Test error reflects how well the model generalizes to new, unseen data.
 At low flexibility, the model is too simple to capture the underlying structure of the data, leading to high bias and poor generalization. The test error is high because the model cannot adapt to the true relationship.
 As flexibility increases, the model better captures the true patterns in the data, reducing both bias and test error. Initially, test error decreases as the model becomes more flexible and is able to generalize better.
-Beyond a certain point, however, the model becomes too flexible, overfitting the training data. It starts to fit noise and small fluctuations that do not generalize to new data, which leads to an increase in test error. This is why the test error curve starts to rise again after reaching a minimum.
+Beyond a certain point, the model becomes too flexible, which overfits the training data. This leads to an increase in test error.
+
 Bayes Error Curve:
 The Bayes error is constant and does not change with flexibility.
 This is the lowest possible error that can be achieved, representing the inherent uncertainty in predicting the target variable, regardless of the model used. This error comes from factors like noise or the inherent randomness in the data.
@@ -592,7 +596,7 @@ models <- lapply(predictors, function(predictor) {
 # Create the scatter plot with the regression line
 
 plot_list <- lapply(predictors, function(predictor) {
-  ggplot(Boston, aes(x = Boston[[predictor]], y = Boston$crim)) +
+  ggplot(Boston, aes(x = .data[[predictor]], y = Boston$crim)) +
     geom_point() +  # scatter plot
     geom_smooth(method = "lm", se = FALSE, color = "blue") +  # regression line
     labs(title = paste("Crime Rate vs", predictor),
@@ -601,6 +605,7 @@ plot_list <- lapply(predictors, function(predictor) {
     theme_minimal()
 })
 
+model_summaries <- lapply(models, summary)
 # Extract p-values from the model summaries
 p_values <- sapply(model_summaries, function(model_summary) {
   coef(model_summary)[2, "Pr(>|t|)"]  # Extracting the p-value for the predictor (2nd row corresponds to predictor)
