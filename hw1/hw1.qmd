@@ -811,7 +811,7 @@ $$
 $$
 Thus, we have shown that:
 $$
-R^2 = [\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2
+R^2 = [\operatorname{Cor}(\mathbf{y}, \hat{\mathbf{y}})]^2 = 1 - \frac{\text{RSS}}{\text{TSS}}
 $$
 
 
