@@ -1,7 +1,7 @@
 ---
 title: "Biostat 212a Homework 2"
 subtitle: "Due Feb 8, 2025 @ 11:59PM"
-author: "YOUR NAME and UID"
+author: "Nathaniel Boyle and 006525153"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 format:
   html:
@@ -24,6 +24,20 @@ knitr:
 
 ## ISL Exercise 4.8.1 (10pts)
 
+Using a little bit of algebra, prove that (4.2) is equivalent to (4.3). In
+other words, the logistic function representation and logit representation for the logistic regression model are equivalent.
+
+$$p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}$$
+
+$$\frac{p(X)} {1 − p(X)} = eβ_0+β_1X$$
+We have $p(X) = \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}$ by definition
+Thus,
+$$ 1-p(X)= 1- \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}$$
+Simplify with common denominator
+
+$$ 1- \frac{e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}} = \frac{1 + e^{\beta_0 + \beta_1 X}-e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}} = \frac{1}{1 + e^{\beta_0 + \beta_1 X}} = 1-p(X)$$
+Therefore,
+$$\frac{p(X)}{1-p(X)} = \frac{(1 + e^{\beta_0 + \beta_1 X})e^{\beta_0 + \beta_1 X}}{1 + e^{\beta_0 + \beta_1 X}}=e^{\beta_0 + \beta_1 X}$$
 ## ISL Exercise 4.8.6 (10pts)
 
 ## ISL Exercise 4.8.9 (10pts)
