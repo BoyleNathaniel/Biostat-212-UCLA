@@ -217,38 +217,226 @@ Direction as the response and the five lag variables plus Volume
 as predictors.
 Use the summary function to print the results. 
 ```{r}
-# 2. Fit the logistic regression model with the five lag variables and Volume as predictors
+# Fit the logistic regression model with the five lag variables and Volume as predictors
 model <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, 
              data = Weekly, 
              family = binomial)
 
-# 3. View the summary of the logistic regression model
+# View the summary of the logistic regression model
 summary(model)
 ```
 Do any of the predictors appear to be statistically significant? If so,
 which ones?
 
 From the model lag 2 is the only significant predictor.
+Want to note our intercept is also significant, meaning
+if all other predictors are zero, the probability of our market being in the
+"up" direction is significantly positive.
 
 (c) Compute the confusion matrix and overall fraction of correct
 predictions. Explain what the confusion matrix is telling you
 about the types of mistakes made by logistic regression.
+
+```{r}
+# Generate predictions using the model
+predictions <- predict(model, type = "response")
+# Convert the probabilities to binary outcomes (0 = Down, 1 = Up)
+predicted_class <- ifelse(predictions > 0.5, "Up", "Down")
+# Create the confusion matrix
+confusion_matrix <- table(Predicted = predicted_class, Actual = Weekly$Direction)
+print(confusion_matrix)
+
+# Compute overall accuracy
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(accuracy)
+```
+This confusion matrix is alerting us of several things.
+1. The low accuracy of this model for predicting what direction
+the market is going to be in.
+2. The over classification of up directions
+3. An extension of 2. we have a large amount of "false positives" from
+this model (i.e. too many "up" directions are actually down.)
+
 
 (d) Now ft the logistic regression model using a training data period
 from 1990 to 2008, with Lag2 as the only predictor. Compute the
 confusion matrix and the overall fraction of correct predictions
 for the held out data (that is, the data from 2009 and 2010).
 
+```{r}
+# Subset the data for training (1990-2008) and testing (2009-2010)
+train_data <- subset(Weekly, Year >= 1990 & Year <= 2008)
+test_data <- subset(Weekly, Year >= 2009 & Year <= 2010)
+
+# Fit the logistic regression model using Lag2 as the only predictor
+model_train <- glm(Direction ~ Lag2, data = train_data, family = binomial)
+
+
+# Make predictions on the test data
+predictions_test <- predict(model_train, newdata = test_data, type = "response")
+
+
+# Convert probabilities to predicted classes (0 = Down, 1 = Up)
+predicted_class_test <- ifelse(predictions_test > 0.5, "Up", "Down")
+
+# Create the confusion matrix
+confusion_matrix_test <- table(Predicted = predicted_class_test, Actual = test_data$Direction)
+
+# Print the confusion matrix
+print(confusion_matrix_test)
+
+# Compute overall accuracy
+accuracy_test <- sum(diag(confusion_matrix_test)) / sum(confusion_matrix_test)
+print(paste("Overall accuracy: ", round(accuracy_test, 4)))
+```
+
 (e) Repeat (d) using LDA.
+
+```{r}
+# Load the MASS package for LDA
+library(MASS)
+
+# Fit the LDA model using Lag2 as the only predictor
+lda_model <- lda(Direction ~ Lag2, data = train_data)
+
+# Make predictions on the test data
+predictions_lda <- predict(lda_model, newdata = test_data)
+
+# Extract the predicted classes
+predicted_class_lda <- predictions_lda$class
+
+# Create the confusion matrix
+confusion_matrix_lda <- table(Predicted = predicted_class_lda, Actual = test_data$Direction)
+
+# Print the confusion matrix
+print(confusion_matrix_lda)
+
+# Compute overall accuracy
+accuracy_lda <- sum(diag(confusion_matrix_lda)) / sum(confusion_matrix_lda)
+print(paste("Overall accuracy using LDA: ", round(accuracy_lda, 4)))
+
+```
+Notes: Linear Discriminant Analysis (LDA)
+Assumptions: LDA assumes that the data from both classes ("Up" and "Down") follow a normal distribution with the same variance.
+Accuracy was about the same as LDA.
+
+
+```{r}
+# Fit the QDA model using Lag2 as the only predictor
+qda_model <- qda(Direction ~ Lag2, data = train_data)
+
+# Make predictions on the test data
+predictions_qda <- predict(qda_model, newdata = test_data)
+
+# Extract the predicted classes
+predicted_class_qda <- predictions_qda$class
+
+# Create the confusion matrix
+confusion_matrix_qda <- table(Predicted = predicted_class_qda, Actual = test_data$Direction)
+
+# Print the confusion matrix
+print(confusion_matrix_qda)
+
+# Compute overall accuracy
+accuracy_qda <- sum(diag(confusion_matrix_qda)) / sum(confusion_matrix_qda)
+print(paste("Overall accuracy using QDA: ", round(accuracy_qda, 4)))
+```
+Notes: Quadratic Discriminant Analysis (QDA)
+
+Does not assume equal covariance for the two classes in "Direction."
+This can allow for more flexibility.
+Accuracy was lower than LDA or Logistic Regression.
+
 
 (f) Repeat (d) using QDA.
 
+```{r}
+# Fit the QDA model using Lag2 as the only predictor
+qda_model <- qda(Direction ~ Lag2, data = train_data)
+
+# Make predictions on the test data
+predictions_qda <- predict(qda_model, newdata = test_data)
+
+# Extract the predicted classes (Up/Down)
+predicted_class_qda <- predictions_qda$class
+
+# Create the confusion matrix
+confusion_matrix_qda <- table(Predicted = predicted_class_qda, Actual = test_data$Direction)
+
+# Print the confusion matrix
+print(confusion_matrix_qda)
+
+# Compute overall accuracy
+accuracy_qda <- sum(diag(confusion_matrix_qda)) / sum(confusion_matrix_qda)
+print(paste("Overall accuracy using QDA: ", round(accuracy_qda, 4)))
+```
+
 (g) Repeat (d) using KNN with K = 1.
+
+```{r}
+# Load the class package for KNN
+library(class)
+
+# Convert the predictors into matrices
+train_x <- as.matrix(train_data$Lag2)
+test_x <- as.matrix(test_data$Lag2)
+
+# Ensure the response variable is a factor (Up/Down) (We know it is but for
+# learning purposes I want to leave it here so I remember to do this later)
+train_y <- as.factor(train_data$Direction)
+test_y <- as.factor(test_data$Direction)
+
+# Apply KNN with K = 1
+predicted_class_knn <- knn(train = train_x, test = test_x, cl = train_y, k = 1)
+
+# Create the confusion matrix
+confusion_matrix_knn <- table(Predicted = predicted_class_knn, Actual = test_y)
+
+# Print the confusion matrix
+print(confusion_matrix_knn)
+
+# Compute overall accuracy
+accuracy_knn <- sum(diag(confusion_matrix_knn)) / sum(confusion_matrix_knn)
+print(paste("Overall accuracy using KNN (K=1): ", round(accuracy_knn, 4)))
+
+```
+
 
 (h) Repeat (d) using naive Bayes.
 
+```{r}
+# Load the e1071 package for Naive Bayes
+library(e1071)
+
+# Lag2 is numeric, and Direction is already a factor (no need to change it)
+train_x <- train_data$Lag2
+test_x <- test_data$Lag2
+train_y <- train_data$Direction
+test_y <- test_data$Direction
+
+# Fit the Naive Bayes model using Lag2 as the predictor
+nb_model <- naiveBayes(Direction ~ Lag2, data = train_data)
+
+# Make predictions on the test data
+predictions_nb <- predict(nb_model, newdata = test_data)
+
+# Create the confusion matrix
+confusion_matrix_nb <- table(Predicted = predictions_nb, Actual = test_y)
+
+# Print the confusion matrix
+print(confusion_matrix_nb)
+
+# Compute overall accuracy
+accuracy_nb <- sum(diag(confusion_matrix_nb)) / sum(confusion_matrix_nb)
+print(paste("Overall accuracy using Naive Bayes: ", round(accuracy_nb, 4)))
+
+```
+
 (i) Which of these methods appears to provide the best results on
 this data?
+
+The best performing model appears to be either logistic regression or LDA models.
+They both produced the exact same accuracy of 62.5%
 
 ## Bonus question: ISL Exercise 4.8.13 Part (j) (30pts)
 
