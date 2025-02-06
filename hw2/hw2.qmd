@@ -116,11 +116,14 @@ summary(Weekly)
 cor(Weekly[, -9])  # Excluding 'Direction' because it's categorical
 
 #histogram of Volume
-hist(Weekly$Volume, main="Histogram of Volume", xlab="Volume", col="lightblue", border="black")
+hist(Weekly$Volume, main="Histogram of Volume", 
+     xlab="Volume", col="lightblue", border="black")
 
 # Boxplot of 'Today' returns by 'Direction' (categorical variable)
-boxplot(Today ~ Direction, data=Weekly, main="Boxplot of Today's Returns by Direction", 
-        xlab="Direction", ylab="Today's Returns", col=c("lightgreen", "lightcoral"))
+boxplot(Today ~ Direction, data=Weekly, 
+        main="Boxplot of Today's Returns by Direction", 
+        xlab="Direction", 
+        ylab="Today's Returns", col=c("lightgreen", "lightcoral"))
 
 # Scatter plot between 'Lag1' and 'Lag2' to check their relationship
 plot(Weekly$Lag1, Weekly$Lag2, main="Scatter Plot of Lag1 vs Lag2",
@@ -306,7 +309,8 @@ predictions_lda <- predict(lda_model, newdata = test_data)
 predicted_class_lda <- predictions_lda$class
 
 # Create the confusion matrix
-confusion_matrix_lda <- table(Predicted = predicted_class_lda, Actual = test_data$Direction)
+confusion_matrix_lda <- table(Predicted = predicted_class_lda, 
+                              Actual = test_data$Direction)
 
 # Print the confusion matrix
 print(confusion_matrix_lda)
@@ -332,7 +336,8 @@ predictions_qda <- predict(qda_model, newdata = test_data)
 predicted_class_qda <- predictions_qda$class
 
 # Create the confusion matrix
-confusion_matrix_qda <- table(Predicted = predicted_class_qda, Actual = test_data$Direction)
+confusion_matrix_qda <- table(Predicted = predicted_class_qda, 
+                              Actual = test_data$Direction)
 
 # Print the confusion matrix
 print(confusion_matrix_qda)
