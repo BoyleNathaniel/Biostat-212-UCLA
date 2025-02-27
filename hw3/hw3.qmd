@@ -112,7 +112,7 @@ probabilities <- sapply(n_values, probability_in_bootstrap)
 
 # Plot the result
 plot(n_values, probabilities, type = "l", col = "blue", lwd = 2,
-     xlab = "n (Sample size)", ylab = "Probability the j-th observation is in the bootstrap sample",
+     xlab = "n (Sample size)", ylab = "Probability",
      main = "Probability that the j-th observation is in the bootstrap sample")
 grid()
 
@@ -204,9 +204,9 @@ se_bootstrap <- sd(bootstrap_means)
 se_bootstrap
 ```
 
-(d) Based on your bootstrap estimate from (c), provide a 95 % confdence interval for the mean of medv. Compare it to the results
+(d) Based on your bootstrap estimate from (c), provide a 95 % confidence interval for the mean of medv. Compare it to the results
 obtained using t.test(Boston$medv).
-Hint: You can approximate a 95 % confdence interval using the
+Hint: You can approximate a 95 % confidence interval using the
 formula [ˆµ − 2SE(ˆµ), µˆ + 2SE(ˆµ)].
 ```{r}
 # Calculate the sample mean of medv (from part a)
@@ -241,7 +241,7 @@ median_medv
 
 (f) We now would like to estimate the standard error of µˆmed. Unfortunately, there is no simple formula for computing the standard
 error of the median. Instead, estimate the standard error of the
-median using the bootstrap. Comment on your fndings.
+median using the bootstrap. Comment on your findings.
 
 ```{r}
 # Set a seed for reproducibility
@@ -282,7 +282,7 @@ percentile_10th
 
 ```
 
-(h) Use the bootstrap to estimate the standard error of µˆ0.1. Comment on your fndings.
+(h) Use the bootstrap to estimate the standard error of µˆ0.1. Comment on your findings.
 
 
 ```{r}
@@ -319,26 +319,217 @@ Show that in the case of linear model with Gaussian errors, maximum likelihood a
 
 ## ISL Exercise 6.6.1 (10pts)
 
+We perform best subset, forward stepwise, and backward stepwise
+selection on a single data set. For each approach, we obtain p + 1
+models, containing 0, 1, 2,...,p predictors. Explain your answers:
+
+(a) Which of the three models with k predictors has the smallest
+training RSS?
+
+Best Subset Selection will yield the model with the smallest training RSS
+
+Best Subset Selection considers all possible combinations of predictors and selects the one that minimizes the training RSS for each value of $k$. Any given number of predictors,
+the Best Subset method will choose the best possible model (in terms of training RSS) from all combinations.
+
+(b) Which of the three models with k predictors has the smallest
+test RSS?
+
+Stepwise models. Stepwise models prevent overfitting due to their constraints.
+
+(c)
+
+i. True
+ii. True
+iii. False
+iv. False
+v. False
+
+
+
 ## ISL Exercise 6.6.3 (10pts)
+For parts (a) through (e), indicate which
+of i. through v. is correct. Justify your answer.
+
+a. We start from 0, meaning we start with the least flexible and most
+restricted model. We will end with the least squares model. As the model gets
+more flexible, the training RSS will decrease slowly.
+
+ii is Correct. The RSS decreases as we increase $s$ due to the model having more
+flexibility
+
+b.
+
+ii is correct. For a test RSS the Test RSS will initially decrease and then start increasing
+as the model gets more flexible and starts to overfit the training data.
+
+c.
+
+iii is correct. As $s$ increases, the model becomes more flexible,
+which steadily increases the variance. At low flexibility the variance starts low
+and as we increase flexibility, variance will also steadily increase.
+
+d.
+
+iv is Correct. As we increase $s$ the bias will decrease steadily because the model
+is fitting the training data better. This continues until the model overfits.
+
+e.
+
+v is Correct. The irreducible error is a constant of the model. It will not change
+even if we increase flexibility.
 
 ## ISL Exercise 6.6.4 (10pts)
 
+For parts (a) through (e), indicate which
+of i. through v. is correct. Justify your answer.
+
+a. iii. Correct. As we increase the regularization term, the model shrinks coefficients. This
+reduces the models' ability to fit the training data perfectly, thus the RSS 
+will increase as $\lambda$ increases.
+
+b. ii. Correct. As $\lambda$ increases with a Test RSS, the test RSS will initially
+decrease as the model becomes less complex and overfitting is reduced. Then as 
+we keep increasing $\lambda$ the model will become so constrained that it no longer
+follows any underlying relationship in the data well, thus the test error will
+increase once more.
+
+c. iii. Correct. The variance will decrease as we increase $\lambda$ because
+increasing $\lambda$ is decreasing flexibility, which we have established 
+reduces variance.
+
+d. iv. Correct. Bias increases as we reduce flexibility, so increasing $\lambda$
+will increase bias, as an increase in $\lambda$ will reduce flexibility.
+
+
 ## ISL Exercise 6.6.5 (10pts)
+
+a. 
+
+Given that $ x_{11} = x_{12} = x_1 $, we can write the following expression:
+
+$$
+(y_1 - \hat\beta_1 x_1 - \hat\beta_2 x_1)^2 + (y_i - \hat\beta_1 x_2 - \hat\beta_2 x_2)^2+ \lambda(\hat\beta^2_1+\hat\beta^2_2)
+$$
+
+b. 
+
+We can use the equation in (a) with respect to our beta values. Then
+set both equal to zero:
+
+$$
+\frac{\partial}{\partial \hat\beta_1}:( 2\hat\beta_1 x_{11}^2 - 2 x_{11} y_1 + 2 \hat\beta_2 x_{11} x_{12} ) + \left( 2 \hat\beta_1 x_{21}^2 - 2 x_{21} y_2 + 2 \hat\beta_2 x_{21} x_{22} \right) + 2 \lambda \hat\beta_1) = 0
+$$
+and
+$$
+\frac{\partial}{\partial \hat\beta_1}:( 2\hat\beta_1 x_{11}^2 - 2 x_{11} y_1 + 2 \hat\beta_2 x_{11} x_{12} ) + \left( 2 \hat\beta_1 x_{21}^2 - 2 x_{21} y_2 + 2 \hat\beta_2 x_{21} x_{22} \right) + 2 \lambda \hat\beta_1) = 0
+$$
+We solve for $\lambda\hat\beta_1$ and $\lambda\hat\beta_2$
+
+$$
+\lambda\hat\beta_1=x_1y_1 +x_2y_2+2\hat\beta_1x_1x_2+2\hat\beta_2x_1x_2
+$$
+$$
+\lambda\hat\beta_2=x_1y_1 +x_2y_2+2\hat\beta_1x_1x_2+2\hat\beta_2x_1x_2
+$$
+Thus we can see by looking at both equations that $\hat\beta_1=\hat\beta_2$
+
+
+c. For a lasso optimization we take the absolute values of our beta hat values.
+$$
+(y_1 - \hat\beta_1 x_1 - \hat\beta_2 x_1)^2 + (y_i - \hat\beta_1 x_2 - \hat\beta_2 x_2)^2+ \lambda(|\hat\beta_1|+|\hat\beta_2|)
+$$
+
+
 
 ## ISL Exercise 6.6.11 (30pts)
 
 You must follow the [typical machine learning paradigm](https://ucla-biostat-212a.github.io/2024winter/slides/06-modelselection/workflow_lasso.html) to compare _at least_ 3 methods: least squares, lasso, and ridge. Report final results as
 
-| Method | CV RMSE | Test RMSE |
-|:------:|:------:|:------:|:------:|
-| LS | | | |
-| Ridge | | | |
-| Lasso | | | |
-| ... | | | |
 
-## Bonus question (20pts)
+(a)
 
-Consider a linear regression, fit by least squares to a set of training data $(x_1, y_1), \ldots, (x_N,  y_N)$ drawn at random from a population. Let $\hat \beta$ be the least squares estimate. Suppose we have some test data $(\tilde{x}_1, \tilde{y}_1), \ldots, (\tilde{x}_M, \tilde{y}_M)$ drawn at random from the same population as the training data. If $R_{\text{train}}(\beta) = \frac{1}{N} \sum_{i=1}^N (y_i - \beta^T x_i)^2$ and $R_{\text{test}}(\beta) = \frac{1}{M} \sum_{i=1}^M (\tilde{y}_i - \beta^T \tilde{x}_i)^2$. Show that
-$$
-\operatorname{E}[R_{\text{train}}(\hat{\beta})] < \operatorname{E}[R_{\text{test}}(\hat{\beta})].
-$$
+```{r}
+# Best subset selection
+
+# install libraries
+install.packages("leaps", repos = "https://cran.rstudio.com/")
+install.packages("glmnet", repos = "https://cran.rstudio.com/")
+
+#load libraries
+library(MASS) 
+library(leaps)   
+library(glmnet) 
+
+#load Boston Dataset
+data(Boston)
+set.seed(1) #set seed for reproducablility 
+predict.regsubsets = function(object, newdata, id, ...) {
+    form = as.formula(object$call[[2]])
+    mat = model.matrix(form, newdata)
+    coefi = coef(object, id = id)
+    xvars = names(coefi)
+    mat[, xvars] %*% coefi
+}
+
+#k-fold cross-validation
+
+k = 10 #10 folds
+folds = sample(1:k, nrow(Boston), replace = TRUE) #assign each observation in boston dataset to one of the k folds
+cv.errors = matrix(NA, k, 13, dimnames = list(NULL, paste(1:13))) #initilize matrix of MSE values
+for (j in 1:k) { #loop through k folds of the cross validation
+    best.fit = regsubsets(crim ~ ., data = Boston[folds != j, ], nvmax = 13)
+    for (i in 1:13) { #loop through each variable in the dataset
+        pred = predict(best.fit, Boston[folds == j, ], id = i) #make predictions
+        cv.errors[j, i] = mean((Boston$crim[folds == j] - pred)^2) #calcuate MSE value of the prediction
+    }
+}
+mean.cv.errors = apply(cv.errors, 2, mean)
+plot(mean.cv.errors, type = "b", xlab = "Number of variables", ylab = "CV error")
+
+min(mean.cv.errors)
+
+regfit.best = regsubsets(crim~., data=Boston, nvmax=13)
+coef(regfit.best, 12)
+```
+
+```{r}
+
+#Lasso Regression
+
+x = model.matrix(crim ~ ., Boston)[, -1]
+y = Boston$crim
+cv.out = cv.glmnet(x, y, alpha = 1, type.measure = "mse")
+plot(cv.out)
+cv.out
+
+```
+```{r}
+#Ridge Regression
+
+cv.out = cv.glmnet(x, y, alpha = 0, type.measure = "mse")
+cv.out
+
+```
+
+```{r}
+#PCR
+
+install.packages("pls", repos = "https://cloud.r-project.org/")
+library(pls)
+pcr.fit = pcr(crim ~ ., data = Boston, scale = TRUE, validation = "CV")
+validationplot(pcr.fit, val.type = "MSEP")
+
+```
+
+
+(b)
+
+Based on this data it seems that the best model for this data would be
+Best subset, as it had the lowest MSE value of 42.46014.
+
+(c)
+
+The best model is the 12 feature model from best subset selection.
+1 feature is missing. This is because when running the best subset model
+the RMSE was found to be the lowest at 12 features. 13 features had a slightly
+higher MSE.
