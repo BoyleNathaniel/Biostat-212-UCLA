@@ -1,0 +1,127 @@
+---
+title: "Biostat 212a Homework 4"
+subtitle: "Due Mar. 4, 2025 @ 11:59PM"
+author: "Nathaniel Boyle and 006525153"
+date: today
+format:
+  html:
+    theme: cosmo
+    embed-resources: true
+    number-sections: true
+    toc: true
+    toc-depth: 4
+    toc-location: left
+    code-fold: false
+engine: knitr
+knitr:
+  opts_chunk: 
+    fig.align: 'center'
+    # fig.width: 6
+    # fig.height: 4
+    message: FALSE
+    cache: false
+---
+
+## ISL Exercise 8.4.3 (10pts)
+Consider the Gini index, classifcation error, and entropy in a simple
+classifcation setting with two classes. Create a single plot that displays each 
+of these quantities as a function of pˆm1. The x-axis should 
+display pˆm1, ranging from 0 to 1, and the y-axis should display the
+value of the Gini index, classifcation error, and entropy.
+
+```{r}
+# Create p^m1 from 0-1, 0.01 step size
+p = seq(0, 1, 0.01)
+
+# Define gini index
+gini = p * (1 - p) * 2
+
+# Define entropy
+entropy = -(p * log(p) + (1 - p) * log(1 - p))
+
+# Define classification error
+class.err = 1 - pmax(p, 1 - p)
+
+# Plot each as a function of p^m1
+matplot(p, cbind(gini, entropy, class.err), col = c("red", "green", "blue"),
+        xlab = expression(paste(hat(p)[m1])), 
+        ylab = "Gini Index, Classification Error, and Entropy")
+```
+Hint: In a setting with two classes, pˆm1 = 1 − pˆm2. You could make
+this plot by hand, but it will be much easier to make in R.
+
+
+## ISL Exercise 8.4.4 (10pts)
+
+This question relates to the plots in Figure 8.14.
+(a) Sketch the tree corresponding to the partition of the predictor
+space illustrated in the left-hand panel of Figure 8.14.
+The numbers inside the boxes indicate the mean of Y within each region.
+
+(b) Create a diagram similar to the left-hand panel of Figure 8.14,
+using the tree illustrated in the right-hand panel of the same
+fgure. You should divide up the predictor space into the correct
+regions, and indicate the mean for each region.
+
+
+```{r}
+par(xpd = NA)
+plot(NA, NA, type = "n", xlim = c(-2, 2), ylim = c(-3, 3), xlab = "X1", ylab = "X2")
+# X2 < 1
+lines(x = c(-2, 2), y = c(1, 1))
+# X1 < 1 with X2 < 1
+lines(x = c(1, 1), y = c(-3, 1))
+text(x = (-2 + 1)/2, y = -1, labels = c(-1.8))
+text(x = 1.5, y = -1, labels = c(0.63))
+# X2 < 2 with X2 >= 1
+lines(x = c(-2, 2), y = c(2, 2))
+text(x = 0, y = 2.5, labels = c(2.49))
+# X1 < 0 with X2<2 and X2>=1
+lines(x = c(0, 0), y = c(1, 2))
+text(x = -1, y = 1.5, labels = c(-1.06))
+text(x = 1, y = 1.5, labels = c(0.21))
+
+```
+## ISL Exercise 8.4.5 (10pts)
+
+Suppose we produce ten bootstrapped samples from a data set
+containing red and green classes. We then apply a classifcation tree
+to each bootstrapped sample and, for a specifc value of X, produce
+10 estimates of P(Class is Red|X):
+
+0.1, 0.15, 0.2, 0.2, 0.55, 0.6, 0.6, 0.65, 0.7, and 0.75.
+
+There are two common ways to combine these results together into a
+single class prediction. One is the majority vote approach discussed in
+this chapter. The second approach is to classify based on the average
+probability. In this example, what is the final classifcation under each
+of these two approaches?
+
+```{r}
+# Initilize our vector to analyze
+p = c(0.1, 0.15, 0.2, 0.2, 0.55, 0.6, 0.6, 0.65, 0.7, 0.75)
+
+# First looking at majority approach
+
+# Checks if the sum of probabilities that are > 50% that class is Red
+# is greater than the sum of probabilities that are < 50% that class is Red
+sum(p >= 0.5) > sum(p < 0.5)
+
+# Looking at mean approach
+mean(p) 
+```
+The final classification for the majority approach will be red, since
+the number of red predictions is greater than the number of green predictions.
+
+The final classifiication for the mean approach is green, since the average of
+the probabilites is less than the 50% threshold.
+
+## ISL Lab 8.3. `Boston` data set (30pts)
+
+Follow the machine learning workflow to train regression tree, random forest, and boosting methods for predicting `medv`. Evaluate out-of-sample performance on a test set.
+
+## ISL Lab 8.3 `Carseats` data set (30pts)
+
+Follow the machine learning workflow to train classification tree, random forest, and boosting methods for classifying `Sales <= 8` versus `Sales > 8`. Evaluate out-of-sample performance on a test set.
+
+
