@@ -213,93 +213,50 @@ Follow the machine learning workflow to train classification tree, random forest
 
 ```{r}
 
-# Example: Using the Boston dataset and creating a new variable
-data("Boston")
+# Install necessary packages
+#install.packages(c("ISLR", "caret", "rpart", "randomForest", "xgboost"))
+library(ISLR)
+library(caret)
+library(rpart)
+library(randomForest)
+library(xgboost)
 
-# Create a new binary outcome variable: Sales <= 8 or Sales > 8
-Boston$SalesClass <- ifelse(Boston$medv <= 8, 0, 1)  # Classifying based on 'medv' column (adjust for your actual Sales column)
+# Load Carseats data
+data(Carseats)
 
-Boston$SalesClass <- as.factor(Boston$SalesClass)
+# Create binary target variable
+Carseats$HighSales <- ifelse(Carseats$Sales <= 8, "No", "Yes")
+Carseats$HighSales <- as.factor(Carseats$HighSales)
 
+# Split data into train and test sets
+set.seed(123)
+trainIndex <- createDataPartition(Carseats$HighSales, p = 0.8, list = FALSE)
+trainData <- Carseats[trainIndex, ]
+testData <- Carseats[-trainIndex, ]
 
-# View the first few rows to understand the structure
-head(Boston)
+# Train Decision Tree
+treeModel <- rpart(HighSales ~ . - Sales, data = trainData, method = "class")
+treePred <- predict(treeModel, testData, type = "class")
+cat("Decision Tree Confusion Matrix:\n")
+print(confusionMatrix(treePred, testData$HighSales))
 
-set.seed(123)  # For reproducibility
+# Train Random Forest
+rfModel <- randomForest(HighSales ~ . - Sales, data = trainData)
+rfPred <- predict(rfModel, testData)
+cat("\nRandom Forest Confusion Matrix:\n")
+print(confusionMatrix(rfPred, testData$HighSales))
 
-# Create a train-test split (80% training, 20% testing)
-trainIndex <- createDataPartition(Boston$SalesClass, p = 0.8, list = FALSE)
-trainData <- Boston[trainIndex, ]
-testData <- Boston[-trainIndex, ]
-
-
-# Train a classification tree
-classTree <- rpart(SalesClass ~ ., data = trainData, method = "class")
-
-# Plot the tree
-plot(classTree)
-text(classTree)
-
-# Make predictions on the test set
-predTree <- predict(classTree, newdata = testData, type = "class")
-
-# For Classification Tree
-predTree <- factor(predTree, levels = levels(testData$SalesClass))
-
-# Evaluate performance: Confusion Matrix and Accuracy
-confMatrix_tree <- confusionMatrix(predTree, as.factor(testData$SalesClass))
-cat("Classification Tree Accuracy:", confMatrix_tree$overall['Accuracy'], "\n")
-
-# Train a random forest model
-rfModel <- randomForest(SalesClass ~ ., data = trainData)
-
-# Make predictions on the test set
-predRF <- predict(rfModel, newdata = testData)
-# Make predictions on the test set (ensure type = "response" for class labels)
-predRF <- predict(rfModel, newdata = testData, type = "response")
-# Evaluate performance: Confusion Matrix and Accuracy
-confMatrix_rf <- confusionMatrix(predRF, as.factor(testData$SalesClass))
-cat("Random Forest Accuracy:", confMatrix_rf$overall['Accuracy'], "\n")
-
+# Train Boosting (XGBoost)
+trainMatrix <- data.matrix(trainData[, -c(1, 12)])
+testMatrix <- data.matrix(testData[, -c(1, 12)])
+trainLabels <- as.numeric(trainData$HighSales) - 1
+testLabels <- as.numeric(testData$HighSales) - 1
+dtrain <- xgb.DMatrix(data = trainMatrix, label = trainLabels)
+dtest <- xgb.DMatrix(data = testMatrix, label = testLabels)
+param <- list(objective = "binary:logistic", eval_metric = "error")
+xgbModel <- xgboost(params = param, data = dtrain, nrounds = 100)
+xgbPred <- predict(xgbModel, dtest)
+xgbPredClass <- ifelse(xgbPred > 0.5, "Yes", "No")
+cat("\nXGBoost Confusion Matrix:\n")
+print(confusionMatrix(factor(xgbPredClass, levels = c("No", "Yes")), testData$HighSales))
 ```
-
-
-```{r}
-# Prepare data for XGBoost (convert to matrix format)
-trainMatrix <- data.matrix(trainData[, -c(14, 15)])  # Excluding 'SalesClass' and target column (adjust based on your dataset)
-testMatrix <- data.matrix(testData[, -c(14, 15)])
-
-trainLabel <- trainData$SalesClass
-testLabel <- testData$SalesClass
-
-trainLabel <- as.numeric(trainData$SalesClass) - 1  # Convert to 0 and 1 (XGBoost expects 0 and 1)
-testLabel <- as.numeric(testData$SalesClass) - 1
-
-# Train the XGBoost model
-xgbModel <- xgboost(data = trainMatrix, label = trainLabel, nrounds = 100, objective = "binary:logistic")
-
-# Make predictions on the test set
-predXGB <- predict(xgbModel, newdata = testMatrix)
-predXGB_class <- ifelse(predXGB > 0.5, 1, 0)  # Convert probabilities to class labels
-
-# Evaluate performance: Confusion Matrix and Accuracy
-confMatrix_xgb <- confusionMatrix(as.factor(predXGB_class), as.factor(testLabel))
-cat("XGBoost Accuracy:", confMatrix_xgb$overall['Accuracy'], "\n")
-
-# Print the accuracy results for all models
-cat("Accuracy for Classification Tree:", confMatrix_tree$overall['Accuracy'], "\n")
-cat("Accuracy for Random Forest:", confMatrix_rf$overall['Accuracy'], "\n")
-cat("Accuracy for XGBoost:", confMatrix_xgb$overall['Accuracy'], "\n")
-
-# Plot Confusion Matrix for Classification Tree
-fourfoldplot(confMatrix_tree$table, main = "Classification Tree Confusion Matrix")
-
-# Plot Confusion Matrix for Random Forest
-fourfoldplot(confMatrix_rf$table, main = "Random Forest Confusion Matrix")
-
-# Plot Confusion Matrix for XGBoost
-fourfoldplot(confMatrix_xgb$table, main = "XGBoost Confusion Matrix")
-
-```
-
-
