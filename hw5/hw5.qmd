@@ -274,8 +274,11 @@ classifiers to non-linear equations.
 Follow the machine learning workflow to train support vector classifier (same as SVM with linear kernel), SVM with polynomial kernel (tune the degree and regularization parameter $C$), and SVM with radial kernel (tune the scale parameter $\gamma$ and regularization parameter $C$) for classifying `Sales<=8` versus `Sales>8`. Use the same seed as in your HW4 for the initial test/train split and compare the final test AUC and accuracy to those methods you tried in HW4.
 
 ```{r eval=FALSE}
-# Install necessary packages if not already installed
-install.packages(c("ISLR", "e1071", "caret"))
+# Check if packages are installed and install them if not
+if (!require("ISLR", quietly = TRUE)) install.packages("ISLR")
+if (!require("e1071", quietly = TRUE)) install.packages("e1071")
+if (!require("caret", quietly = TRUE)) install.packages("caret")
+
 
 # Load the libraries
 library(ISLR)
@@ -295,8 +298,6 @@ trainIndex <- createDataPartition(Carseats$SalesBinary, p = 0.7, list = FALSE)
 trainData <- Carseats[trainIndex, ]
 testData <- Carseats[-trainIndex, ]
 
-
-
 # Standardize the training and testing sets
 preProcValues <- preProcess(trainData[, -c(1, 2, 11)], method = c("center", "scale"))
 trainDataScaled <- predict(preProcValues, trainData[, -c(1, 2, 11)])
@@ -306,7 +307,9 @@ testDataScaled <- predict(preProcValues, testData[, -c(1, 2, 11)])
 trainDataScaled$SalesBinary <- trainData$SalesBinary
 testDataScaled$SalesBinary <- testData$SalesBinary
 
-
+# Ensure that SalesBinary is a factor before making predictions
+trainDataScaled$SalesBinary <- factor(trainDataScaled$SalesBinary, levels = c(0, 1))
+testDataScaled$SalesBinary <- factor(testDataScaled$SalesBinary, levels = c(0, 1))
 
 # SVM with linear kernel
 svm_linear <- svm(SalesBinary ~ ., data = trainDataScaled, kernel = "linear")
@@ -314,8 +317,11 @@ svm_linear <- svm(SalesBinary ~ ., data = trainDataScaled, kernel = "linear")
 # Make predictions
 pred_linear <- predict(svm_linear, testDataScaled)
 
-# Evaluate the model
-confusionMatrix(pred_linear, testData$SalesBinary)
+# Convert the predicted values to factors (for linear kernel)
+pred_linear_factor <- factor(pred_linear, levels = c(0, 1))
+
+# Evaluate the model for linear kernel
+confusionMatrix(pred_linear_factor, testDataScaled$SalesBinary)
 
 # Tune SVM with polynomial kernel
 tune_poly <- tune(svm, SalesBinary ~ ., data = trainDataScaled, 
@@ -325,14 +331,19 @@ tune_poly <- tune(svm, SalesBinary ~ ., data = trainDataScaled,
 # Get the best model
 svm_poly <- tune_poly$best.model
 
-# Make predictions
+# Make predictions for the polynomial kernel
 pred_poly <- predict(svm_poly, testDataScaled)
 
-# Evaluate the model
-confusionMatrix(pred_poly, testData$SalesBinary)
+# Convert the predicted values to factors (for polynomial kernel)
+pred_poly_factor <- factor(pred_poly, levels = c(0, 1))
+
+# Evaluate the model for polynomial kernel
+confusionMatrix(pred_poly_factor, testDataScaled$SalesBinary)
 
 
+```
 
+```{r}
 # Tune SVM with radial kernel
 tune_radial <- tune(svm, SalesBinary ~ ., data = trainDataScaled, 
                     kernel = "radial", 
@@ -341,18 +352,93 @@ tune_radial <- tune(svm, SalesBinary ~ ., data = trainDataScaled,
 # Get the best model
 svm_radial <- tune_radial$best.model
 
-# Make predictions
+# Make predictions for radial kernel
 pred_radial <- predict(svm_radial, testDataScaled)
 
-# Evaluate the model
-confusionMatrix(pred_radial, testData$SalesBinary)
+# Convert the predicted values to factors (for radial kernel)
+pred_radial_factor <- factor(pred_radial, levels = c(0, 1))
+
+# Ensure that SalesBinary in the test set is a factor with the same levels
+testDataScaled$SalesBinary <- factor(testDataScaled$SalesBinary, levels = c(0, 1))
+
+# Evaluate the model for radial kernel
+confusionMatrix(pred_radial_factor, testDataScaled$SalesBinary)
 
 # Compare the accuracy of each model
-cat("Linear Kernel Accuracy: ", sum(pred_linear == testData$SalesBinary) / length(pred_linear), "\n")
-cat("Polynomial Kernel Accuracy: ", sum(pred_poly == testData$SalesBinary) / length(pred_poly), "\n")
-cat("Radial Kernel Accuracy: ", sum(pred_radial == testData$SalesBinary) / length(pred_radial), "\n")
+cat("Linear Kernel Accuracy: ", sum(pred_linear_factor == testDataScaled$SalesBinary) / length(pred_linear_factor), "\n")
+cat("Polynomial Kernel Accuracy: ", sum(pred_poly_factor == testDataScaled$SalesBinary) / length(pred_poly_factor), "\n")
+cat("Radial Kernel Accuracy: ", sum(pred_radial_factor == testDataScaled$SalesBinary) / length(pred_radial_factor), "\n")
+
 
 ```
+Use the same seed as in your HW4 for the initial test/train split and compare the final test AUC and accuracy to those methods you tried in HW4.
+
+```{r}
+# Load the pROC package for AUC calculation
+if (!require("pROC", quietly = TRUE)) install.packages("pROC")
+library(pROC)
+
+# --- Linear Kernel ---
+# Calculate accuracy for linear kernel
+linear_accuracy <- sum(pred_linear_factor == testDataScaled$SalesBinary) / length(pred_linear_factor)
+
+# Calculate AUC for linear kernel
+roc_linear <- roc(testDataScaled$SalesBinary, as.numeric(pred_linear_factor))
+linear_auc <- auc(roc_linear)
+
+# --- Polynomial Kernel ---
+# Calculate accuracy for polynomial kernel
+poly_accuracy <- sum(pred_poly_factor == testDataScaled$SalesBinary) / length(pred_poly_factor)
+
+# Calculate AUC for polynomial kernel
+roc_poly <- roc(testDataScaled$SalesBinary, as.numeric(pred_poly_factor))
+poly_auc <- auc(roc_poly)
+
+# --- Radial Kernel ---
+# Calculate accuracy for radial kernel
+radial_accuracy <- sum(pred_radial_factor == testDataScaled$SalesBinary) / length(pred_radial_factor)
+
+# Calculate AUC for radial kernel
+roc_radial <- roc(testDataScaled$SalesBinary, as.numeric(pred_radial_factor))
+radial_auc <- auc(roc_radial)
+
+# --- Print the results ---
+cat("Linear Kernel Accuracy: ", linear_accuracy, "\n")
+cat("Linear Kernel AUC: ", linear_auc, "\n")
+cat("Polynomial Kernel Accuracy: ", poly_accuracy, "\n")
+cat("Polynomial Kernel AUC: ", poly_auc, "\n")
+cat("Radial Kernel Accuracy: ", radial_accuracy, "\n")
+cat("Radial Kernel AUC: ", radial_auc, "\n")
+
+```
+Decision Tree Statistics:
+Accuracy : 0.7342
+ROC AUC: 0.809508
+
+Random Forest Statistics:
+ROC AUC for Random Forest: 0.8134615
+Accuracy for Random Forest: 0.8282828 
+
+XGBoost statistics:
+Accuracy : 0.8228
+XGBoost ROC AUC: 0.9235372
+
+The linear kernel model was the best performing model when compared to the other
+SVM kernel models, boasting the highest accuracy and ROC AUC value among the
+three used here.
+It also performed better than both the Decision Tree as well as the random
+forest models in terms of accuracy and ROC AUC.
+
+The polynomial kernel was the worst performing SVM model and only performed
+marginally better in terms of accuracy and AUC than the decision tree.
+
+The Radial Kernel performed slightly worse than the polynomial kernel and 
+both decision tree and random forest models.
+
+It seems that the best model was the XGBoost model out of all models tested,
+scoring the highest accuracy and ROC AUC value.
+
+
 
 ## Bonus (10pts)
 

@@ -214,12 +214,13 @@ Follow the machine learning workflow to train classification tree, random forest
 ```{r}
 
 # Install necessary packages
-#install.packages(c("ISLR", "caret", "rpart", "randomForest", "xgboost"))
+#install.packages(c("ISLR", "caret", "rpart", "randomForest", "xgboost", "pROC"))
 library(ISLR)
 library(caret)
 library(rpart)
 library(randomForest)
 library(xgboost)
+library(pROC)  # For ROC and AUC
 
 # Load Carseats data
 data(Carseats)
@@ -236,15 +237,24 @@ testData <- Carseats[-trainIndex, ]
 
 # Train Decision Tree
 treeModel <- rpart(HighSales ~ . - Sales, data = trainData, method = "class")
-treePred <- predict(treeModel, testData, type = "class")
+treePred <- predict(treeModel, testData, type = "prob")[, 2]  # Get the probability for "Yes"
 cat("Decision Tree Confusion Matrix:\n")
-print(confusionMatrix(treePred, testData$HighSales))
+print(confusionMatrix(factor(ifelse(treePred > 0.5, "Yes", "No"), levels = c("No", "Yes")), testData$HighSales))
+
+# Compute ROC and AUC for Decision Tree
+treeROC <- roc(testData$HighSales, treePred)  # ROC for Decision Tree
+cat("\nDecision Tree ROC AUC:", auc(treeROC), "\n")
 
 # Train Random Forest
 rfModel <- randomForest(HighSales ~ . - Sales, data = trainData)
-rfPred <- predict(rfModel, testData)
+rfPred <- predict(rfModel, testData, type = "response")
+rfPredProb <- as.numeric(rfPred) - 1  # Convert factor to numeric (0 or 1)
 cat("\nRandom Forest Confusion Matrix:\n")
 print(confusionMatrix(rfPred, testData$HighSales))
+
+# Compute ROC and AUC for Random Forest
+rfROC <- roc(testData$HighSales, rfPredProb)  # ROC for Random Forest
+cat("\nRandom Forest ROC AUC:", auc(rfROC), "\n")
 
 # Train Boosting (XGBoost)
 trainMatrix <- data.matrix(trainData[, -c(1, 12)])
@@ -259,4 +269,77 @@ xgbPred <- predict(xgbModel, dtest)
 xgbPredClass <- ifelse(xgbPred > 0.5, "Yes", "No")
 cat("\nXGBoost Confusion Matrix:\n")
 print(confusionMatrix(factor(xgbPredClass, levels = c("No", "Yes")), testData$HighSales))
+
+# Compute ROC and AUC for XGBoost
+xgbROC <- roc(testData$HighSales, xgbPred)  # ROC for XGBoost
+cat("\nXGBoost ROC AUC:", auc(xgbROC), "\n")
+
+```
+
+```{r}
+# printing accuracy and ROC AUC for hw5
+# Load necessary libraries
+library(MASS)
+library(caret)
+library(randomForest)
+library(xgboost)
+library(rpart)
+library(e1071)
+library(pROC)  # For AUC calculation
+
+# Load the Boston dataset from the MASS package
+data("Boston")
+
+# View the structure of the data
+str(Boston)
+
+set.seed(123)  # For reproducibility
+
+# Create a train-test split (80% training, 20% testing)
+trainIndex <- createDataPartition(Boston$medv, p = 0.8, list = FALSE)
+trainData <- Boston[trainIndex, ]
+testData <- Boston[-trainIndex, ]
+
+# Train a random forest model
+rfModel <- randomForest(medv ~ ., data = trainData)
+
+# Make predictions on the test set
+predRF <- predict(rfModel, newdata = testData)
+
+# Evaluate performance: Calculate RMSE for regression
+rmse_rf <- sqrt(mean((predRF - testData$medv)^2))
+cat("RMSE for Random Forest:", rmse_rf, "\n")
+
+# Calculate R-squared for Random Forest (as accuracy for regression)
+rsq_rf <- 1 - sum((predRF - testData$medv)^2) / sum((testData$medv - mean(testData$medv))^2)
+cat("R-squared for Random Forest:", rsq_rf, "\n")
+
+# --- Convert regression problem to binary classification ---
+# Threshold medv at a certain value (e.g., 20) to create a binary classification task
+threshold <- 20
+testData$medv_binary <- ifelse(testData$medv > threshold, 1, 0)  # Class 1 if medv > threshold, otherwise 0
+
+# Convert regression predictions to binary predictions using the same threshold
+predRF_binary <- ifelse(predRF > threshold, 1, 0)
+
+# --- Calculate AUC for Random Forest ---
+roc_rf <- roc(testData$medv_binary, predRF_binary)
+auc_rf <- auc(roc_rf)
+cat("AUC for Random Forest:", auc_rf, "\n")
+
+# --- Calculate Accuracy for Random Forest ---
+accuracy_rf <- sum(predRF_binary == testData$medv_binary) / length(testData$medv_binary)
+cat("Accuracy for Random Forest:", accuracy_rf, "\n")
+
+# Plotting actual vs predicted for Random Forest
+plot(testData$medv, predRF, main = "Actual vs Predicted (Random Forest)",
+     xlab = "Actual", ylab = "Predicted", col = "blue", pch = 19)
+abline(0, 1, col = "red")
+
+# Now print RMSE, R-squared, Accuracy, and AUC for Random Forest
+cat("RMSE for Random Forest:", rmse_rf, "\n")
+cat("R-squared for Random Forest:", rsq_rf, "\n")
+cat("Accuracy for Random Forest:", accuracy_rf, "\n")
+cat("AUC for Random Forest:", auc_rf, "\n")
+
 ```
