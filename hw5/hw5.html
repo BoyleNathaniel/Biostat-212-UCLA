@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nathaniel Boyle and 006525153">
-<meta name="dcterms.date" content="2025-03-11">
+<meta name="dcterms.date" content="2025-03-13">
 
 <title>Biostat 212a Homework 5</title>
 <style>
@@ -3270,7 +3270,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 11, 2025</p>
+      <p class="date">March 13, 2025</p>
     </div>
   </div>
   
@@ -3288,8 +3288,8 @@ window.Quarto = {
 <h3 data-number="1.1" class="anchored" data-anchor-id="hyperplanes-in-two-dimensions."><span class="header-section-number">1.1</span> 1. Hyperplanes in two dimensions.</h3>
 <section id="part-a.-and-part-b." class="level4" data-number="1.1.1">
 <h4 data-number="1.1.1" class="anchored" data-anchor-id="part-a.-and-part-b."><span class="header-section-number">1.1.1</span> part a. and part b.</h4>
-<p>Sketch the hyperplane 1+3X1−X2=0. Indicate the set of points for which 1+3X1−X2&gt;0 as well as the set of points for which 1+3X1−X2&lt;0.</p>
-<p>On the same plot, sketch the hyperplane −2+X1+2X2=0 Indicate the set of points for which −2+X1+2X2&gt;0 as well as the set of points for which −2+X1+2X2&lt;0</p>
+<p>Sketch the hyperplane <span class="math inline">\(1+3X_1−X_2=0\)</span>. Indicate the set of points for which <span class="math inline">\(1+3X1−X2&gt;0\)</span> as well as the set of points for which <span class="math inline">\(1+3X_1−X_2&lt;0\)</span>.</p>
+<p>On the same plot, sketch the hyperplane <span class="math inline">\(−2+X_1+2X_2=0\)</span> Indicate the set of points for which <span class="math inline">\(−2+X_1+2X_2&gt;0\)</span> as well as the set of points for which <span class="math inline">\(−2+X_1+2X_2&lt;0\)</span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3349,10 +3349,10 @@ window.Quarto = {
 </section>
 <section id="isl-exercise-9.7.2-10pts" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="isl-exercise-9.7.2-10pts"><span class="header-section-number">2</span> ISL Exercise 9.7.2 (10pts)</h2>
-<p>We have seen that in p = 2 dimensions, a linear decision boundary takes the form <span class="math inline">\(β_0+β_1X_1+β_2X_2 = 0\)</span>. We now investigate a non-linear decision boundary.</p>
+<p>We have seen that in <span class="math inline">\(p = 2\)</span> dimensions, a linear decision boundary takes the form <span class="math inline">\(β_0+β_1X_1+β_2X_2 = 0\)</span>. We now investigate a non-linear decision boundary.</p>
 <section id="a-and-2.b" class="level3" data-number="2.1">
 <h3 data-number="2.1" class="anchored" data-anchor-id="a-and-2.b"><span class="header-section-number">2.1</span> 2.a and 2.b</h3>
-<p>Sketch the curve <span class="math inline">\((1 + X1)^2 + (2 − X2)^2 = 4\)</span>. On your sketch, indicate the set of points for which <span class="math inline">\((1 + X1)^2 + (2 − X2)^2 &gt; 4\)</span>, as well as the set of points for which <span class="math inline">\((1 + X1)^2 + (2 − X2)^2 ≤ 4\)</span></p>
+<p>Sketch the curve <span class="math inline">\((1 + X_1)^2 + (2 − X2)^2 = 4\)</span>. On your sketch, indicate the set of points for which <span class="math inline">\((1 + X1)^2 + (2 − X2)^2 &gt; 4\)</span>, as well as the set of points for which <span class="math inline">\((1 + X1)^2 + (2 − X2)^2 ≤ 4\)</span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load ggplot2 library</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
@@ -3515,84 +3515,286 @@ window.Quarto = {
 <h2 data-number="3" class="anchored" data-anchor-id="support-vector-machines-svms-on-the-carseats-data-set-30pts"><span class="header-section-number">3</span> Support vector machines (SVMs) on the <code>Carseats</code> data set (30pts)</h2>
 <p>Follow the machine learning workflow to train support vector classifier (same as SVM with linear kernel), SVM with polynomial kernel (tune the degree and regularization parameter <span class="math inline">\(C\)</span>), and SVM with radial kernel (tune the scale parameter <span class="math inline">\(\gamma\)</span> and regularization parameter <span class="math inline">\(C\)</span>) for classifying <code>Sales&lt;=8</code> versus <code>Sales&gt;8</code>. Use the same seed as in your HW4 for the initial test/train split and compare the final test AUC and accuracy to those methods you tried in HW4.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install necessary packages if not already installed</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;ISLR&quot;</span>, <span class="st">&quot;e1071&quot;</span>, <span class="st">&quot;caret&quot;</span>))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the libraries</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(e1071)  <span class="co"># SVM implementation</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)   <span class="co"># For model training and tuning</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the carseats dataset</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Carseats&quot;</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a binary target variable: Sales &lt;= 8 versus Sales &gt; 8</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>Carseats<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Carseats<span class="sc">$</span>Sales <span class="sc">&lt;=</span> <span class="dv">8</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a training and testing split</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(Carseats<span class="sc">$</span>SalesBinary, <span class="at">p =</span> <span class="fl">0.7</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>trainData <span class="ot">&lt;-</span> Carseats[trainIndex, ]</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>testData <span class="ot">&lt;-</span> Carseats[<span class="sc">-</span>trainIndex, ]</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize the training and testing sets</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>preProcValues <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(trainData[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">11</span>)], <span class="at">method =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>, <span class="st">&quot;scale&quot;</span>))</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>trainDataScaled <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcValues, trainData[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">11</span>)])</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>testDataScaled <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcValues, testData[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">11</span>)])</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the target variable back</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>trainDataScaled<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> trainData<span class="sc">$</span>SalesBinary</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>testDataScaled<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> testData<span class="sc">$</span>SalesBinary</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="co"># SVM with linear kernel</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>svm_linear <span class="ot">&lt;-</span> <span class="fu">svm</span>(SalesBinary <span class="sc">~</span> ., <span class="at">data =</span> trainDataScaled, <span class="at">kernel =</span> <span class="st">&quot;linear&quot;</span>)</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>pred_linear <span class="ot">&lt;-</span> <span class="fu">predict</span>(svm_linear, testDataScaled)</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model</span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pred_linear, testData<span class="sc">$</span>SalesBinary)</span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Tune SVM with polynomial kernel</span></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>tune_poly <span class="ot">&lt;-</span> <span class="fu">tune</span>(svm, SalesBinary <span class="sc">~</span> ., <span class="at">data =</span> trainDataScaled, </span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>                  <span class="at">kernel =</span> <span class="st">&quot;polynomial&quot;</span>, </span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ranges =</span> <span class="fu">list</span>(<span class="at">degree =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">cost =</span> <span class="dv">10</span><span class="sc">^</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">1</span>)))</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the best model</span></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>svm_poly <span class="ot">&lt;-</span> tune_poly<span class="sc">$</span>best.model</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>pred_poly <span class="ot">&lt;-</span> <span class="fu">predict</span>(svm_poly, testDataScaled)</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model</span></span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pred_poly, testData<span class="sc">$</span>SalesBinary)</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Tune SVM with radial kernel</span></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>tune_radial <span class="ot">&lt;-</span> <span class="fu">tune</span>(svm, SalesBinary <span class="sc">~</span> ., <span class="at">data =</span> trainDataScaled, </span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>                    <span class="at">kernel =</span> <span class="st">&quot;radial&quot;</span>, </span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ranges =</span> <span class="fu">list</span>(<span class="at">sigma =</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>), <span class="at">cost =</span> <span class="dv">10</span><span class="sc">^</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">1</span>)))</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the best model</span></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>svm_radial <span class="ot">&lt;-</span> tune_radial<span class="sc">$</span>best.model</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>pred_radial <span class="ot">&lt;-</span> <span class="fu">predict</span>(svm_radial, testDataScaled)</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model</span></span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pred_radial, testData<span class="sc">$</span>SalesBinary)</span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the accuracy of each model</span></span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Linear Kernel Accuracy: &quot;</span>, <span class="fu">sum</span>(pred_linear <span class="sc">==</span> testData<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(pred_linear), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Polynomial Kernel Accuracy: &quot;</span>, <span class="fu">sum</span>(pred_poly <span class="sc">==</span> testData<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(pred_poly), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Radial Kernel Accuracy: &quot;</span>, <span class="fu">sum</span>(pred_radial <span class="sc">==</span> testData<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(pred_radial), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if packages are installed and install them if not</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;ISLR&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;ISLR&quot;</span>, <span class="at">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;e1071&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;e1071&quot;</span>, <span class="at">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">&quot;caret&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">install.packages</span>(<span class="st">&quot;caret&quot;</span>, <span class="at">repos =</span> <span class="st">&quot;https://cloud.r-project.org/&quot;</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the libraries</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ISLR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;ISLR&#39; was built under R version 4.4.3</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(e1071)  <span class="co"># SVM implementation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;e1071&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)   <span class="co"># For model training and tuning</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;caret&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the carseats dataset</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Carseats&quot;</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a binary target variable: Sales &lt;= 8 versus Sales &gt; 8</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>Carseats<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Carseats<span class="sc">$</span>Sales <span class="sc">&lt;=</span> <span class="dv">8</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a training and testing split</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(Carseats<span class="sc">$</span>SalesBinary, <span class="at">p =</span> <span class="fl">0.7</span>, <span class="at">list =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>trainData <span class="ot">&lt;-</span> Carseats[trainIndex, ]</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>testData <span class="ot">&lt;-</span> Carseats[<span class="sc">-</span>trainIndex, ]</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize the training and testing sets</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>preProcValues <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(trainData[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">11</span>)], <span class="at">method =</span> <span class="fu">c</span>(<span class="st">&quot;center&quot;</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">&quot;scale&quot;</span>))</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>trainDataScaled <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcValues, trainData[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">11</span>)])</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>testDataScaled <span class="ot">&lt;-</span> <span class="fu">predict</span>(preProcValues, testData[, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">11</span>)])</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the target variable back</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>trainDataScaled<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> trainData<span class="sc">$</span>SalesBinary</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>testDataScaled<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> testData<span class="sc">$</span>SalesBinary</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure that SalesBinary is a factor before making predictions</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>trainDataScaled<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> <span class="fu">factor</span>(trainDataScaled<span class="sc">$</span>SalesBinary,</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>testDataScaled<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> <span class="fu">factor</span>(testDataScaled<span class="sc">$</span>SalesBinary,</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># SVM with linear kernel</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>svm_linear <span class="ot">&lt;-</span> <span class="fu">svm</span>(SalesBinary <span class="sc">~</span> .,</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> trainDataScaled, <span class="at">kernel =</span> <span class="st">&quot;linear&quot;</span>)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>pred_linear <span class="ot">&lt;-</span> <span class="fu">predict</span>(svm_linear, testDataScaled)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the predicted values to factors (for linear kernel)</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>pred_linear_factor <span class="ot">&lt;-</span> <span class="fu">factor</span>(pred_linear, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model for linear kernel</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pred_linear_factor, testDataScaled<span class="sc">$</span>SalesBinary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 62 12
+         1  9 37
+                                         
+               Accuracy : 0.825          
+                 95% CI : (0.745, 0.8883)
+    No Information Rate : 0.5917         
+    P-Value [Acc &gt; NIR] : 3.691e-08      
+                                         
+                  Kappa : 0.6344         
+                                         
+ Mcnemar&#39;s Test P-Value : 0.6625         
+                                         
+            Sensitivity : 0.8732         
+            Specificity : 0.7551         
+         Pos Pred Value : 0.8378         
+         Neg Pred Value : 0.8043         
+             Prevalence : 0.5917         
+         Detection Rate : 0.5167         
+   Detection Prevalence : 0.6167         
+      Balanced Accuracy : 0.8142         
+                                         
+       &#39;Positive&#39; Class : 0              
+                                         </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tune SVM with polynomial kernel</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tune_poly <span class="ot">&lt;-</span> <span class="fu">tune</span>(svm, SalesBinary <span class="sc">~</span> ., <span class="at">data =</span> trainDataScaled, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">kernel =</span> <span class="st">&quot;polynomial&quot;</span>, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ranges =</span> <span class="fu">list</span>(<span class="at">degree =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">cost =</span> <span class="dv">10</span><span class="sc">^</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">1</span>)))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the best model</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>svm_poly <span class="ot">&lt;-</span> tune_poly<span class="sc">$</span>best.model</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions for the polynomial kernel</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>pred_poly <span class="ot">&lt;-</span> <span class="fu">predict</span>(svm_poly, testDataScaled)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the predicted values to factors (for polynomial kernel)</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>pred_poly_factor <span class="ot">&lt;-</span> <span class="fu">factor</span>(pred_poly, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model for polynomial kernel</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pred_poly_factor, testDataScaled<span class="sc">$</span>SalesBinary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 58 13
+         1 13 36
+                                          
+               Accuracy : 0.7833          
+                 95% CI : (0.6989, 0.8533)
+    No Information Rate : 0.5917          
+    P-Value [Acc &gt; NIR] : 7.182e-06       
+                                          
+                  Kappa : 0.5516          
+                                          
+ Mcnemar&#39;s Test P-Value : 1               
+                                          
+            Sensitivity : 0.8169          
+            Specificity : 0.7347          
+         Pos Pred Value : 0.8169          
+         Neg Pred Value : 0.7347          
+             Prevalence : 0.5917          
+         Detection Rate : 0.4833          
+   Detection Prevalence : 0.5917          
+      Balanced Accuracy : 0.7758          
+                                          
+       &#39;Positive&#39; Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tune SVM with radial kernel</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>tune_radial <span class="ot">&lt;-</span> <span class="fu">tune</span>(svm, SalesBinary <span class="sc">~</span> ., <span class="at">data =</span> trainDataScaled, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">kernel =</span> <span class="st">&quot;radial&quot;</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ranges =</span> <span class="fu">list</span>(<span class="at">sigma =</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">cost =</span> <span class="dv">10</span><span class="sc">^</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">:</span><span class="dv">1</span>)))</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the best model</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>svm_radial <span class="ot">&lt;-</span> tune_radial<span class="sc">$</span>best.model</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions for radial kernel</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>pred_radial <span class="ot">&lt;-</span> <span class="fu">predict</span>(svm_radial, testDataScaled)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the predicted values to factors (for radial kernel)</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>pred_radial_factor <span class="ot">&lt;-</span> <span class="fu">factor</span>(pred_radial, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure that SalesBinary in the test set is a factor with the same levels</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>testDataScaled<span class="sc">$</span>SalesBinary <span class="ot">&lt;-</span> <span class="fu">factor</span>(testDataScaled<span class="sc">$</span>SalesBinary,</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the model for radial kernel</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(pred_radial_factor, testDataScaled<span class="sc">$</span>SalesBinary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 62 13
+         1  9 36
+                                          
+               Accuracy : 0.8167          
+                 95% CI : (0.7357, 0.8814)
+    No Information Rate : 0.5917          
+    P-Value [Acc &gt; NIR] : 1.175e-07       
+                                          
+                  Kappa : 0.6157          
+                                          
+ Mcnemar&#39;s Test P-Value : 0.5224          
+                                          
+            Sensitivity : 0.8732          
+            Specificity : 0.7347          
+         Pos Pred Value : 0.8267          
+         Neg Pred Value : 0.8000          
+             Prevalence : 0.5917          
+         Detection Rate : 0.5167          
+   Detection Prevalence : 0.6250          
+      Balanced Accuracy : 0.8040          
+                                          
+       &#39;Positive&#39; Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the accuracy of each model</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Linear Kernel Accuracy: &quot;</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(pred_linear_factor <span class="sc">==</span> testDataScaled<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>      pred_linear_factor), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Kernel Accuracy:  0.825 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Polynomial Kernel Accuracy: &quot;</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(pred_poly_factor <span class="sc">==</span> testDataScaled<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>      pred_poly_factor), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Polynomial Kernel Accuracy:  0.7833333 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Radial Kernel Accuracy: &quot;</span>,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(pred_radial_factor <span class="sc">==</span> testDataScaled<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>      pred_radial_factor), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Radial Kernel Accuracy:  0.8166667 </code></pre>
+</div>
+</div>
+<p>Use the same seed as in your HW4 for the initial test/train split and compare the final test AUC and accuracy to those methods you tried in HW4.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the pROC package for AUC calculation</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;pROC&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;pROC&quot;</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Linear Kernel ---</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy for linear kernel</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>linear_accuracy <span class="ot">&lt;-</span> <span class="fu">sum</span>(</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  pred_linear_factor <span class="sc">==</span> testDataScaled<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(pred_linear_factor)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate AUC for linear kernel</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>roc_linear <span class="ot">&lt;-</span> <span class="fu">roc</span>(testDataScaled<span class="sc">$</span>SalesBinary, <span class="fu">as.numeric</span>(pred_linear_factor))</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>linear_auc <span class="ot">&lt;-</span> <span class="fu">auc</span>(roc_linear)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Polynomial Kernel ---</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy for polynomial kernel</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>poly_accuracy <span class="ot">&lt;-</span> <span class="fu">sum</span>(</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  pred_poly_factor <span class="sc">==</span> testDataScaled<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(pred_poly_factor)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate AUC for polynomial kernel</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>roc_poly <span class="ot">&lt;-</span> <span class="fu">roc</span>(testDataScaled<span class="sc">$</span>SalesBinary, <span class="fu">as.numeric</span>(pred_poly_factor))</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>poly_auc <span class="ot">&lt;-</span> <span class="fu">auc</span>(roc_poly)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Radial Kernel ---</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy for radial kernel</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>radial_accuracy <span class="ot">&lt;-</span> <span class="fu">sum</span>(</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>  pred_radial_factor <span class="sc">==</span> testDataScaled<span class="sc">$</span>SalesBinary) <span class="sc">/</span> <span class="fu">length</span>(pred_radial_factor)</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate AUC for radial kernel</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>roc_radial <span class="ot">&lt;-</span> <span class="fu">roc</span>(testDataScaled<span class="sc">$</span>SalesBinary, <span class="fu">as.numeric</span>(pred_radial_factor))</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>radial_auc <span class="ot">&lt;-</span> <span class="fu">auc</span>(roc_radial)</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Print the results ---</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Linear Kernel Accuracy: &quot;</span>, linear_accuracy, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Kernel Accuracy:  0.825 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Linear Kernel AUC: &quot;</span>, linear_auc, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Kernel AUC:  0.8141707 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Polynomial Kernel Accuracy: &quot;</span>, poly_accuracy, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Polynomial Kernel Accuracy:  0.7833333 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Polynomial Kernel AUC: &quot;</span>, poly_auc, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Polynomial Kernel AUC:  0.7757976 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Radial Kernel Accuracy: &quot;</span>, radial_accuracy, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Radial Kernel Accuracy:  0.8166667 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Radial Kernel AUC: &quot;</span>, radial_auc, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Radial Kernel AUC:  0.8039667 </code></pre>
+</div>
+</div>
+<p>Decision Tree Statistics: Accuracy : 0.7342 ROC AUC: 0.809508</p>
+<p>Random Forest Statistics: ROC AUC for Random Forest: 0.8134615 Accuracy for Random Forest: 0.8282828</p>
+<p>XGBoost statistics: Accuracy : 0.8228 XGBoost ROC AUC: 0.9235372</p>
+<p>The linear kernel model was the best performing model when compared to the other SVM kernel models, boasting the highest accuracy and ROC AUC value among the three used here. It also performed better than both the Decision Tree as well as the random forest models in terms of accuracy and ROC AUC.</p>
+<p>The polynomial kernel was the worst performing SVM model and only performed marginally better in terms of accuracy and AUC than the decision tree.</p>
+<p>The Radial Kernel performed slightly worse than the polynomial kernel and both decision tree and random forest models.</p>
+<p>It seems that the best model was the XGBoost model out of all models tested, scoring the highest accuracy and ROC AUC value.</p>
 </section>
 <section id="bonus-10pts" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="bonus-10pts"><span class="header-section-number">4</span> Bonus (10pts)</h2>

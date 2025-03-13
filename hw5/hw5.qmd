@@ -27,13 +27,13 @@ knitr:
 ### 1. Hyperplanes in two dimensions.
 #### part a. and part b. 
 
-Sketch the hyperplane 1+3X1−X2=0.
-Indicate the set of points for which 1+3X1−X2>0
-as well as the set of points for which 1+3X1−X2<0.
+Sketch the hyperplane $1+3X_1−X_2=0$.
+Indicate the set of points for which $1+3X1−X2>0$
+as well as the set of points for which $1+3X_1−X_2<0$.
 
-On the same plot, sketch the hyperplane −2+X1+2X2=0
-Indicate the set of points for which −2+X1+2X2>0
-as well as the set of points for which −2+X1+2X2<0
+On the same plot, sketch the hyperplane $−2+X_1+2X_2=0$
+Indicate the set of points for which $−2+X_1+2X_2>0$
+as well as the set of points for which $−2+X_1+2X_2<0$
 
 ```{r}
 library(ggplot2)
@@ -86,13 +86,13 @@ ggplot(df, aes(x = x1)) +
 
 ## ISL Exercise 9.7.2 (10pts)
 
-We have seen that in p = 2 dimensions, a linear decision boundary
+We have seen that in $p = 2$ dimensions, a linear decision boundary
 takes the form $β_0+β_1X_1+β_2X_2 = 0$. We now investigate a non-linear
 decision boundary.
 
 ### 2.a and 2.b
 
-Sketch the curve $(1 + X1)^2 + (2 − X2)^2 = 4$.
+Sketch the curve $(1 + X_1)^2 + (2 − X2)^2 = 4$.
 On your sketch, indicate the set of points for which
 $(1 + X1)^2 + (2 − X2)^2 > 4$,
 as well as the set of points for which
@@ -273,12 +273,17 @@ classifiers to non-linear equations.
 
 Follow the machine learning workflow to train support vector classifier (same as SVM with linear kernel), SVM with polynomial kernel (tune the degree and regularization parameter $C$), and SVM with radial kernel (tune the scale parameter $\gamma$ and regularization parameter $C$) for classifying `Sales<=8` versus `Sales>8`. Use the same seed as in your HW4 for the initial test/train split and compare the final test AUC and accuracy to those methods you tried in HW4.
 
-```{r eval=FALSE}
+```{r}
 # Check if packages are installed and install them if not
-if (!require("ISLR", quietly = TRUE)) install.packages("ISLR")
-if (!require("e1071", quietly = TRUE)) install.packages("e1071")
-if (!require("caret", quietly = TRUE)) install.packages("caret")
-
+if (!requireNamespace("ISLR", quietly = TRUE)) {
+  install.packages("ISLR", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("e1071", quietly = TRUE)) {
+  install.packages("e1071", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("caret", quietly = TRUE)) {
+  install.packages("caret", repos = "https://cloud.r-project.org/")
+}
 
 # Load the libraries
 library(ISLR)
@@ -299,7 +304,8 @@ trainData <- Carseats[trainIndex, ]
 testData <- Carseats[-trainIndex, ]
 
 # Standardize the training and testing sets
-preProcValues <- preProcess(trainData[, -c(1, 2, 11)], method = c("center", "scale"))
+preProcValues <- preProcess(trainData[, -c(1, 2, 11)], method = c("center",
+                                                                  "scale"))
 trainDataScaled <- predict(preProcValues, trainData[, -c(1, 2, 11)])
 testDataScaled <- predict(preProcValues, testData[, -c(1, 2, 11)])
 
@@ -308,11 +314,14 @@ trainDataScaled$SalesBinary <- trainData$SalesBinary
 testDataScaled$SalesBinary <- testData$SalesBinary
 
 # Ensure that SalesBinary is a factor before making predictions
-trainDataScaled$SalesBinary <- factor(trainDataScaled$SalesBinary, levels = c(0, 1))
-testDataScaled$SalesBinary <- factor(testDataScaled$SalesBinary, levels = c(0, 1))
+trainDataScaled$SalesBinary <- factor(trainDataScaled$SalesBinary,
+                                      levels = c(0, 1))
+testDataScaled$SalesBinary <- factor(testDataScaled$SalesBinary,
+                                     levels = c(0, 1))
 
 # SVM with linear kernel
-svm_linear <- svm(SalesBinary ~ ., data = trainDataScaled, kernel = "linear")
+svm_linear <- svm(SalesBinary ~ .,
+                  data = trainDataScaled, kernel = "linear")
 
 # Make predictions
 pred_linear <- predict(svm_linear, testDataScaled)
@@ -322,6 +331,10 @@ pred_linear_factor <- factor(pred_linear, levels = c(0, 1))
 
 # Evaluate the model for linear kernel
 confusionMatrix(pred_linear_factor, testDataScaled$SalesBinary)
+```
+
+
+```{r}
 
 # Tune SVM with polynomial kernel
 tune_poly <- tune(svm, SalesBinary ~ ., data = trainDataScaled, 
@@ -340,14 +353,14 @@ pred_poly_factor <- factor(pred_poly, levels = c(0, 1))
 # Evaluate the model for polynomial kernel
 confusionMatrix(pred_poly_factor, testDataScaled$SalesBinary)
 
-
 ```
 
 ```{r}
 # Tune SVM with radial kernel
 tune_radial <- tune(svm, SalesBinary ~ ., data = trainDataScaled, 
                     kernel = "radial", 
-                    ranges = list(sigma = seq(0.01, 1, by = 0.1), cost = 10^(-1:1)))
+                    ranges = list(sigma = seq(0.01, 1, by = 0.1),
+                                  cost = 10^(-1:1)))
 
 # Get the best model
 svm_radial <- tune_radial$best.model
@@ -359,16 +372,25 @@ pred_radial <- predict(svm_radial, testDataScaled)
 pred_radial_factor <- factor(pred_radial, levels = c(0, 1))
 
 # Ensure that SalesBinary in the test set is a factor with the same levels
-testDataScaled$SalesBinary <- factor(testDataScaled$SalesBinary, levels = c(0, 1))
+testDataScaled$SalesBinary <- factor(testDataScaled$SalesBinary,
+                                     levels = c(0, 1))
 
 # Evaluate the model for radial kernel
 confusionMatrix(pred_radial_factor, testDataScaled$SalesBinary)
+```
 
+
+```{r}
 # Compare the accuracy of each model
-cat("Linear Kernel Accuracy: ", sum(pred_linear_factor == testDataScaled$SalesBinary) / length(pred_linear_factor), "\n")
-cat("Polynomial Kernel Accuracy: ", sum(pred_poly_factor == testDataScaled$SalesBinary) / length(pred_poly_factor), "\n")
-cat("Radial Kernel Accuracy: ", sum(pred_radial_factor == testDataScaled$SalesBinary) / length(pred_radial_factor), "\n")
-
+cat("Linear Kernel Accuracy: ",
+    sum(pred_linear_factor == testDataScaled$SalesBinary) / length(
+      pred_linear_factor), "\n")
+cat("Polynomial Kernel Accuracy: ",
+    sum(pred_poly_factor == testDataScaled$SalesBinary) / length(
+      pred_poly_factor), "\n")
+cat("Radial Kernel Accuracy: ",
+    sum(pred_radial_factor == testDataScaled$SalesBinary) / length(
+      pred_radial_factor), "\n")
 
 ```
 Use the same seed as in your HW4 for the initial test/train split and compare the final test AUC and accuracy to those methods you tried in HW4.
@@ -380,7 +402,8 @@ library(pROC)
 
 # --- Linear Kernel ---
 # Calculate accuracy for linear kernel
-linear_accuracy <- sum(pred_linear_factor == testDataScaled$SalesBinary) / length(pred_linear_factor)
+linear_accuracy <- sum(
+  pred_linear_factor == testDataScaled$SalesBinary) / length(pred_linear_factor)
 
 # Calculate AUC for linear kernel
 roc_linear <- roc(testDataScaled$SalesBinary, as.numeric(pred_linear_factor))
@@ -388,7 +411,8 @@ linear_auc <- auc(roc_linear)
 
 # --- Polynomial Kernel ---
 # Calculate accuracy for polynomial kernel
-poly_accuracy <- sum(pred_poly_factor == testDataScaled$SalesBinary) / length(pred_poly_factor)
+poly_accuracy <- sum(
+  pred_poly_factor == testDataScaled$SalesBinary) / length(pred_poly_factor)
 
 # Calculate AUC for polynomial kernel
 roc_poly <- roc(testDataScaled$SalesBinary, as.numeric(pred_poly_factor))
@@ -396,7 +420,8 @@ poly_auc <- auc(roc_poly)
 
 # --- Radial Kernel ---
 # Calculate accuracy for radial kernel
-radial_accuracy <- sum(pred_radial_factor == testDataScaled$SalesBinary) / length(pred_radial_factor)
+radial_accuracy <- sum(
+  pred_radial_factor == testDataScaled$SalesBinary) / length(pred_radial_factor)
 
 # Calculate AUC for radial kernel
 roc_radial <- roc(testDataScaled$SalesBinary, as.numeric(pred_radial_factor))
