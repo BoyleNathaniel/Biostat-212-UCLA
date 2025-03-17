@@ -20,44 +20,57 @@ knitr:
     # fig.height: 4
     message: FALSE
     cache: false
+    warning: false
 ---
 
 Load R libraries.
 ```{r}
+if (!requireNamespace("pheatmap", quietly = TRUE)) {
+  install.packages("pheatmap", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("ggdendro", quietly = TRUE)) {
+  install.packages("ggdendro", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("tidyclust", quietly = TRUE)) {
+  install.packages("tidyclust", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("RcppHungarian", quietly = TRUE)) {
+  install.packages("RcppHungarian", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("glmnet", quietly = TRUE)) {
+  install.packages("glmnet", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("dplyr", quietly = TRUE)) {
+  install.packages("dplyr", repos = "https://cloud.r-project.org/")
+}
+
 library(tidyverse)
 library(tidymodels)
 library(readr)
 library(tswge)
 library(ggplot2)
+library(ggdendro)
+library(glmnet)
+library(yardstick)
+library(workflows)
+library(parsnip)
+library(tidyclust)
+library(RcppHungarian)
+library(xgboost)
+library(caret)
+library(dplyr)
+library(randomForest)
+library(stats)
+library(reshape2)
+library(gridExtra)
+library(pheatmap)
 
-acfdf <- function(vec) {
-    vacf <- acf(vec, plot = F)
-    with(vacf, data.frame(lag, acf))
-}
-
-ggacf <- function(vec) {
-    ac <- acfdf(vec)
-    ggplot(data = ac, aes(x = lag, y = acf)) + geom_hline(aes(yintercept = 0)) + 
-        geom_segment(mapping = aes(xend = lag, yend = 0))
-}
-
-tplot <- function(vec) {
-    df <- data.frame(X = vec, t = seq_along(vec))
-    ggplot(data = df, aes(x = t, y = X)) + geom_line()
-}
 ```
 
 ## New York Stock Exchange (NYSE) data (1962-1986) (140 pts)
 
-::: {#fig-nyse}
-
-<p align="center">
-![](ISL_fig_10_14.pdf){width=600px height=600px}
-</p>
-
 Historical trading statistics from the New York Stock Exchange. Daily values of the normalized log trading volume, DJIA return, and log volatility are shown for a 24-year period from 1962-1986. We wish to predict trading volume on any day, given the history on all earlier days. To the left of the red bar (January 2, 1980) is training data, and to the right test data.
 
-:::
 
 The [`NYSE.csv`](https://raw.githubusercontent.com/ucla-biostat-212a/2025winter/master/slides/data/NYSE.csv) file contains three daily time series from the New York Stock Exchange (NYSE) for the period Dec 3, 1962-Dec 31, 1986 (6,051 trading days).
 
@@ -74,6 +87,25 @@ url = "https://raw.githubusercontent.com/ucla-biostat-212a/2025winter/master/sli
 NYSE <- read_csv(url)
 
 NYSE
+```
+```{r}
+acfdf <- function(vec) {
+  vacf <- acf(vec, plot = F)
+  with(vacf, data.frame(lag, acf))
+}
+
+ggacf <- function(vec) {
+  ac <- acfdf(vec)
+  ggplot(data = ac, aes(x=lag, y = acf)) +geom_hline(aes(yintercept = 0)) +
+    geom_segment(mapping = aes(xend = lag, yend = 0))
+}
+
+tplot <- function(vec) {
+  df <- data.frame(X = vec, t = seq_along(vec))
+  ggplot(data = df, aes(x = t, y = X)) +geom_line()
+}
+
+
 ```
 The **autocorrelation** at lag $\ell$ is the correlation of all pairs $(v_t, v_{t-\ell})$ that are $\ell$ trading days apart. These sizable correlations give us confidence that past values will be helpful in predicting the future.
 
@@ -99,6 +131,7 @@ seq(1, 30) %>%
   geom_segment(mapping = aes(xend = lag, yend = 0)) + 
   ggtitle("AutoCorrelation between `log volume` and lagged `DJ return`")
 ```
+
 ```{r}
 seq(1, 30) %>% 
   map(function(x) {cor(NYSE$log_volume , lag(NYSE$log_volatility, x),
@@ -129,7 +162,57 @@ Use the $R^2$ between forecast and actual values as the cross validation and tes
 
 ### Baseline method (20 pts)
 
-We use the straw man (use yesterday’s value of `log trading volume` to predict that of today) as the baseline method. Evaluate the $R^2$ of this method on the test data.
+We use the straw man (use yesterday’s value of `log trading volume` to predict
+that of today) as the baseline method.
+Evaluate the $R^2$ of this method on the test data.
+
+```{r}
+#baseline method
+
+# Create the baseline prediction (using the previous day's log trading volume)
+NYSE_baseline <- NYSE |>
+  mutate(BaselinePrediction = lag(log_volume, n = 1)) |>
+  filter(!is.na(BaselinePrediction))
+  
+# View the first few rows to check the baseline predictions
+head(NYSE_baseline)
+
+# Check the structure of the data to ensure that the Date column is correctly parsed
+str(NYSE_baseline)
+head(NYSE_baseline)
+
+# Convert 'Date' column to Date type (if not already)
+NYSE_baseline$Date <- as.Date(NYSE_baseline$date, format = "%m/%d/%Y")
+
+# Ensure that the 'log_volume' column exists and is named correctly
+head(NYSE_baseline)
+
+# Create the baseline prediction (using the previous day's log trading volume)
+NYSE_baseline <- NYSE_baseline |>
+  mutate(BaselinePrediction = lag(log_volume, n = 1)) |>
+  filter(!is.na(BaselinePrediction))
+
+# View the first few rows to check the baseline predictions
+head(NYSE_baseline)
+
+# Split the data into training and test sets (before and after January 1st, 1980)
+train_data <- NYSE_baseline %>%
+  filter(Date < "1980-01-01")
+
+test_data <- NYSE_baseline %>%
+  filter(Date >= "1980-01-01")
+
+# View the train and test set sizes to ensure proper split
+dim(train_data)
+dim(test_data)
+
+# Calculate the R^2 for the baseline model on the test data
+# Use lm (linear model) to calculate R^2 between predicted and actual log trading volume
+model <- lm(log_volume ~ BaselinePrediction, data = test_data)
+
+# Get the R^2 value
+summary(model)$r.squared
+```
 
 ### Autoregression (AR) forecaster (30 pts)
 
@@ -149,7 +232,105 @@ $$
 $$
 known as an **order-$L$ autoregression** model or **AR($L$)**.
 
+```{r}
+# Example time series data
+log_volume <- NYSE$log_volume
+
+# Define the order of the autoregression (L=3 for AR(3) model)
+L <- 3
+
+# Create the matrix M with lagged values (first column is for the intercept term)
+T <- length(log_volume)
+M <- cbind(
+  1,  # intercept term (constant)
+  lag(log_volume, 1)[(L+1):T],  # lag 1
+  lag(log_volume, 2)[(L+1):T],  # lag 2
+  lag(log_volume, 3)[(L+1):T]   # lag 3
+)
+
+# Create the vector y (the target variable, which is log_volume from L+1 to T)
+y <- log_volume[(L+1):T]
+
+# Fit the OLS model using the lm() function (exclude intercept in the formula since it's already included in M)
+model <- lm(y ~ M - 1)  # '-1' removes the intercept term (since it's already in M)
+
+# View the model coefficients
+summary(model)
+
+```
+
 - Tune AR(5) with elastic net (lasso + ridge) regularization using all 3 features on the training data, and evaluate the test performance. 
+
+```{r}
+
+# Convert Date column to Date type if it's not already
+NYSE$date <- as.Date(NYSE$date, format = "%m/%d/%Y")
+
+# Create lagged features for log_volume, DJIA_return, and log_volatility
+L <- 5  # We will use AR(5) model, so L = 5
+
+NYSE_lagged <- NYSE %>%
+  mutate(
+    lag_log_volume_1 = lag(log_volume, 1),
+    lag_log_volume_2 = lag(log_volume, 2),
+    lag_log_volume_3 = lag(log_volume, 3),
+    lag_log_volume_4 = lag(log_volume, 4),
+    lag_log_volume_5 = lag(log_volume, 5),
+    
+    lag_DJ_return_1 = lag(DJ_return, 1),
+    lag_DJ_return_2 = lag(DJ_return, 2),
+    lag_DJ_return_3 = lag(DJ_return, 3),
+    lag_DJ_return_4 = lag(DJ_return, 4),
+    lag_DJ_return_5 = lag(DJ_return, 5),
+    
+    lag_log_volatility_1 = lag(log_volatility, 1),
+    lag_log_volatility_2 = lag(log_volatility, 2),
+    lag_log_volatility_3 = lag(log_volatility, 3),
+    lag_log_volatility_4 = lag(log_volatility, 4),
+    lag_log_volatility_5 = lag(log_volatility, 5)
+  ) %>%
+  filter(complete.cases(.))  # Remove rows with NA values caused by lagging
+
+# Split data into training (before 1980) and test (after 1980)
+train_data <- NYSE_lagged %>% filter(date < "1980-01-01")
+test_data <- NYSE_lagged %>% filter(date >= "1980-01-01")
+
+# Inspect the sizes of the train and test sets
+dim(train_data)
+dim(test_data)
+
+
+# Prepare training data
+X_train <- as.matrix(train_data %>% select(starts_with("lag_")))  # All lagged features
+y_train <- train_data$log_volume  # Target variable
+
+# Prepare test data
+X_test <- as.matrix(test_data %>% select(starts_with("lag_")))
+y_test <- test_data$log_volume
+
+
+# Fit the Elastic Net model using cross-validation
+cv_model <- cv.glmnet(X_train, y_train, alpha = 0.5, nfolds = 10)  # alpha = 0.5 for Elastic Net
+
+# View the cross-validation results
+cv_model
+
+# Plot the cross-validation curve
+plot(cv_model)
+
+
+# Predict on the test set
+y_pred <- predict(cv_model, X_test, s = "lambda.min")
+
+# Calculate R^2 on the test set
+rss <- sum((y_test - y_pred)^2)
+tss <- sum((y_test - mean(y_test))^2)
+r_squared <- 1 - (rss / tss)
+
+# Print the R^2 value
+r_squared
+
+```
 
 - Hint: [Workflow: Lasso](https://ucla-biostat-212a.github.io/2025winter/slides/06-modelselection/workflow_lasso.html) is a good starting point.
 
@@ -157,11 +338,183 @@ known as an **order-$L$ autoregression** model or **AR($L$)**.
 
 - Use the same features as in AR($L$) for the random forest. Tune the random forest and evaluate the test performance.
 
+```{r}
+
+# Create lagged features for log_volume, DJIA_return, and log_volatility
+L <- 5  # We will use AR(5) model, so L = 5
+
+NYSE_lagged <- NYSE %>%
+  mutate(
+    lag_log_volume_1 = lag(log_volume, 1),
+    lag_log_volume_2 = lag(log_volume, 2),
+    lag_log_volume_3 = lag(log_volume, 3),
+    lag_log_volume_4 = lag(log_volume, 4),
+    lag_log_volume_5 = lag(log_volume, 5),
+    
+    lag_DJ_return_1 = lag(DJ_return, 1),
+    lag_DJ_return_2 = lag(DJ_return, 2),
+    lag_DJ_return_3 = lag(DJ_return, 3),
+    lag_DJ_return_4 = lag(DJ_return, 4),
+    lag_DJ_return_5 = lag(DJ_return, 5),
+    
+    lag_log_volatility_1 = lag(log_volatility, 1),
+    lag_log_volatility_2 = lag(log_volatility, 2),
+    lag_log_volatility_3 = lag(log_volatility, 3),
+    lag_log_volatility_4 = lag(log_volatility, 4),
+    lag_log_volatility_5 = lag(log_volatility, 5)
+  ) %>%
+  filter(complete.cases(.))  # Remove rows with NA values caused by lagging
+
+# Split data into training (before 1980) and test (after 1980)
+train_data <- NYSE_lagged %>% filter(date < "1980-01-01")
+test_data <- NYSE_lagged %>% filter(date >= "1980-01-01")
+
+# Inspect the sizes of the train and test sets
+dim(train_data)
+dim(test_data)
+
+# Prepare the training data matrix and target variable
+X_train <- train_data %>% select(starts_with("lag_"))
+y_train <- train_data$log_volume
+
+# Prepare the test data matrix and target variable
+X_test <- test_data %>% select(starts_with("lag_"))
+y_test <- test_data$log_volume
+
+# Set up a training control object for tuning (use 10-fold cross-validation)
+train_control <- trainControl(method = "cv", number = 10)
+
+# Correct the tuning grid: Only include mtry for Random Forest
+tune_grid <- expand.grid(
+  mtry = c(2, 4, 6, 8, 10)  # Number of variables to consider at each split
+)
+
+# Tune the random forest model
+rf_tune <- train(
+  x = X_train, 
+  y = y_train,
+  method = "rf", # Random Forest method
+  trControl = train_control,
+  tuneGrid = tune_grid, 
+  ntree = 500  # Number of trees in the forest
+)
+
+# View the best tuned parameters
+print(rf_tune$bestTune)
+
+#our best forest model was with mtry 6
+# this means 6 variables considered each split provided
+# the best outcome
+
+```
+```{r}
+#evaluate model perofmrance
+
+# Make predictions on the test set
+y_pred_rf <- predict(rf_tune, X_test)
+
+# Calculate R^2 on the test set
+rss_rf <- sum((y_test - y_pred_rf)^2)
+tss_rf <- sum((y_test - mean(y_test))^2)
+r_squared_rf <- 1 - (rss_rf / tss_rf)
+
+# Print the R^2 value
+print(r_squared_rf)
+
+#found R^2 is 0.4, lower than previous models.
+
+```
+
 - Hint: [Workflow: Random Forest for Prediction](https://ucla-biostat-212a.github.io/2025winter/slides/08-tree/workflow_rf_reg.html) is a good starting point.
 
 ### Boosting forecaster (30pts)
 
 - Use the same features as in AR($L$) for the boosting. Tune the boosting algorithm and evaluate the test performance.
+
+```{r, warning=FALSE}
+
+# Create lagged features for log_volume, DJIA_return, and log_volatility
+L <- 5  # We will use AR(5) model, so L = 5
+
+NYSE_lagged <- NYSE %>%
+  mutate(
+    lag_log_volume_1 = lag(log_volume, 1),
+    lag_log_volume_2 = lag(log_volume, 2),
+    lag_log_volume_3 = lag(log_volume, 3),
+    lag_log_volume_4 = lag(log_volume, 4),
+    lag_log_volume_5 = lag(log_volume, 5),
+    
+    lag_DJ_return_1 = lag(DJ_return, 1),
+    lag_DJ_return_2 = lag(DJ_return, 2),
+    lag_DJ_return_3 = lag(DJ_return, 3),
+    lag_DJ_return_4 = lag(DJ_return, 4),
+    lag_DJ_return_5 = lag(DJ_return, 5),
+    
+    lag_log_volatility_1 = lag(log_volatility, 1),
+    lag_log_volatility_2 = lag(log_volatility, 2),
+    lag_log_volatility_3 = lag(log_volatility, 3),
+    lag_log_volatility_4 = lag(log_volatility, 4),
+    lag_log_volatility_5 = lag(log_volatility, 5)
+  ) %>%
+  filter(complete.cases(.))  # Remove rows with NA values caused by lagging
+
+# Split data into training (before 1980) and test (after 1980)
+train_data <- NYSE_lagged %>% filter(date < "1980-01-01")
+test_data <- NYSE_lagged %>% filter(date >= "1980-01-01")
+
+# Prepare the training data matrix and target variable
+X_train <- train_data %>% select(starts_with("lag_"))
+y_train <- train_data$log_volume
+
+# Prepare the test data matrix and target variable
+X_test <- test_data %>% select(starts_with("lag_"))
+y_test <- test_data$log_volume
+
+# Convert the data to matrix format for xgboost
+X_train_matrix <- as.matrix(X_train)
+X_test_matrix <- as.matrix(X_test)
+
+# Set up a training control object for tuning (use 5-fold cross-validation)
+train_control <- trainControl(method = "cv", number = 5)
+
+# Set up the correct tuning grid
+tune_grid <- expand.grid(
+  nrounds = c(10, 50, 100),           # boosting iterations
+  max_depth = c(3, 5),             # Limit max_depth
+  eta = c(0.01, 0.1),              # Use smaller eta values
+  gamma = c(0, 0.1),               # Reduce gamma values
+  colsample_bytree = c(0.7),       # Keep colsample_bytree constant
+  subsample = c(0.7),              # Keep subsample constant
+  min_child_weight = c(1)          # Reduce min_child_weight values
+)
+
+
+# Train the xgboost model with tuning
+xgb_tune <- train(
+  x = X_train_matrix,
+  y = y_train,
+  method = "xgbTree",  # Use xgboost algorithm
+  trControl = train_control,
+  tuneGrid = tune_grid
+)
+
+# View the best-tuned parameters
+print(xgb_tune$bestTune)
+
+
+# Make predictions on the test set
+y_pred_xgb <- predict(xgb_tune, X_test_matrix)
+
+# Calculate R^2 on the test set
+rss_xgb <- sum((y_test - y_pred_xgb)^2)
+tss_xgb <- sum((y_test - mean(y_test))^2)
+r_squared_xgb <- 1 - (rss_xgb / tss_xgb)
+
+# Print the R^2 value
+print(paste("R^2 for xgboost model:", r_squared_xgb))
+
+
+```
 
 - Hint: [Workflow: Boosting tree for Prediction](https://ucla-biostat-212a.github.io/2025winter/slides/08-tree/workflow_boosting_reg.html) is a good starting point.
 
@@ -171,6 +524,31 @@ known as an **order-$L$ autoregression** model or **AR($L$)**.
 Your score for this question is largely determined by your final test performance.
 
 Summarize the performance of different machine learning forecasters in the following format. 
+
+```{r}
+# Extract CV R² from the Random Forest model
+print("Random Forest Cross-Validation R² values:")
+print(rf_tune$results[, c("mtry", "RMSE", "Rsquared")])
+
+# Predict on the test set
+rf_predictions <- predict(rf_tune, newdata = test_data)
+
+# Calculate test R²
+rf_test_r2 <- cor(rf_predictions, test_data$log_volume)^2
+print(paste("Random Forest Test R²:", rf_test_r2))
+
+# Extract CV R² from the XGBoost model
+print("XGBoost Cross-Validation R² values:")
+print(xgb_tune$results[, c("nrounds", "max_depth", "eta", "Rsquared")])
+
+# Predict on the test set
+xgb_predictions <- predict(xgb_tune, newdata = test_data)
+
+# Calculate test R²
+xgb_test_r2 <- cor(xgb_predictions, test_data$log_volume)^2
+print(paste("XGBoost Test R²:", xgb_test_r2))
+
+```
 
 | Method | CV $R^2$ | Test $R^2$ |
 |:------:|:------:|:------:|:------:|
@@ -190,18 +568,14 @@ header = F.
 ```{r}
 #load dataset
 
-# Load the readr package
-library(readr)
-
 # URL to the CSV file
 url <- "http://www.statlearning.com/s/Ch12Ex13.csv"
 
-# Load the dataset directly from the URL
-data <- read_csv(url)
+# Load the dataset directly from the URL, ignore header
+data <- read.csv(url, header = F)
 
 # Check the first few rows of the data
 head(data)
-
 
 ```
 
@@ -210,12 +584,198 @@ head(data)
 distance, and plot the dendrogram.
 
 ```{r}
-install.packages("ggdendro")
-# Load necessary libraries
-library(readr)
-library(stats)
+
+# Compute the correlation matrix
+correlation_matrix <- cor(t(data))
+
+# Convert the correlation matrix into a distance matrix (1 - correlation)
+dist_matrix <- as.dist(1 - correlation_matrix)
+
+# Perform hierarchical clustering
+hc <- hclust(dist_matrix)
+
+# Convert the hierarchical clustering object to a data frame suitable for ggplot
+dendrogram_data <- as.dendrogram(hc)
+
+# Plot the dendrogram using ggplot2
+ggdendrogram(dendrogram_data, rotate = FALSE, theme_dendro = TRUE) + 
+  labs(title = "Hierarchical Clustering Dendrogram", 
+       x = "Samples", 
+       y = "Height") + 
+  theme_minimal() + 
+  theme(panel.background = element_blank(),  # Remove the grey background
+        axis.text.x = element_text(size = 12, angle =45),    # Adjust axis text size if needed
+        axis.title = element_text(size = 14)) +
+  scale_x_continuous(breaks = seq(0, nrow(data), by = 50))  # Display every 100th tick# Adjust axis title size
+
+```
+
+Do the genes separate
+the samples into the two groups?
+
+From what it looks like we can see at least two distinct groups around sample
+No. 600 to 750.
+
+```{r}
+#different linkage methods
+
+# Create a list of methods for hierarchical clustering
+methods <- c("complete", "single", "average", "ward.D", "centroid")
+
+# Function to create a dendrogram plot for each method
+create_dendrogram <- function(method, dist_matrix) {
+  # Perform hierarchical clustering with the specified method
+  hc <- hclust(dist_matrix, method = method)
+  
+  # Convert the hierarchical clustering object to a data frame suitable for ggplot
+  dendrogram_data <- as.dendrogram(hc)
+  
+  # Plot the dendrogram using ggplot2
+  p <- ggdendrogram(dendrogram_data, rotate = FALSE, theme_dendro = TRUE) + 
+    labs(title = paste(method), 
+         x = "Samples", 
+         y = "Height") + 
+    theme_minimal() + 
+    theme(panel.background = element_blank(),  # Remove the grey background
+          axis.text.x = element_text(size = 12, angle = 45, hjust = 1),  # Rotate only x-axis labels
+          axis.title = element_text(size = 14)) +  # Adjust axis title size
+    scale_x_continuous(breaks = seq(0, nrow(data), by = 100))  # Display every 100th tick
+  
+  return(p)
+}
+
+# Create a list of dendrogram plots for each method
+dendrogram_plots <- lapply(methods, create_dendrogram, dist_matrix = dist_matrix)
+
+# Arrange the plots in a grid
+grid.arrange(grobs = dendrogram_plots, ncol = 2)  # 2 columns for the layout
+
+
+```
+
+
+Do your results depend on the
+type of linkage used?
+
+It still appears that there are 2 distinct groups of some sort present in all the
+different linkage types. However how these groups are presented are each a
+little different.
+
+### PCA and UMAP (30 pts)
+
+Now we want to see the clusters from the genes using a PCA map
+and a UMAP.
+
+```{r}
+# PCA Maps
+
+# Standardize the data (center and scale)
+data_scaled <- scale(data)
+
+# Perform PCA
+pca_result <- prcomp(data_scaled)
+
+# Extract the PCA results (first two components)
+pca_data <- data.frame(pca_result$x)
+
+# Assuming you have some known groupings (e.g., based on hierarchical clustering), 
+# you can assign cluster labels to each sample (e.g., for two groups).
+# You can use hierarchical clustering to decide the groups or use a known column.
+# Example: Let's assume you want to color points by hierarchical clustering:
+
+# Perform clustering again with a chosen method (e.g., complete linkage)
+hc <- hclust(dist_matrix, method = "complete")
+
+# Cut the tree into two clusters
+clusters <- cutree(hc, k = 2)  # Assuming you want 2 clusters
+
+# Add the cluster labels to the PCA data
+pca_data$Cluster <- factor(clusters)
+
+# Plot the PCA results using ggplot2
 library(ggplot2)
-library(ggdendro)
+ggplot(pca_data, aes(x = PC1, y = PC2, color = Cluster)) +
+  geom_point(size = 3) +
+  labs(title = "PCA of Gene Expression Data",
+       x = "Principal Component 1",
+       y = "Principal Component 2") +
+  theme_minimal() +
+  scale_color_manual(values = c("blue", "red"))  # Customize the colors as needed
+
+```
+```{r}
+# UMAP
+# Load the necessary library for UMAP
+library(umap)
+
+# Perform UMAP on the scaled data
+umap_result <- umap(data_scaled)
+
+# Extract UMAP results (first two components)
+umap_data <- data.frame(UMAP1 = umap_result$layout[, 1], 
+                        UMAP2 = umap_result$layout[, 2])
+
+# Assuming you have cluster labels from hierarchical clustering (as before)
+umap_data$Cluster <- factor(clusters)  # Use the clusters from hierarchical clustering
+
+# Plot the UMAP results using ggplot2
+library(ggplot2)
+ggplot(umap_data, aes(x = UMAP1, y = UMAP2, color = Cluster)) +
+  geom_point(size = 3) +
+  labs(title = "UMAP of Gene Expression Data",
+       x = "UMAP 1",
+       y = "UMAP 2") +
+  theme_minimal() +
+  scale_color_manual(values = c("blue", "red"))  # Customize the colors as needed
+
+```
+```{r}
+# Test block
+
+transposed_data <- data |>
+  t()|>
+  as.data.frame()|>
+  as_tibble()|>
+  rename(ID = rowname)
+
+
+names(transposed_data) <- c("ID", paste(seq(1,1000),""))
+
+transposed_data <- transposed_data |>
+  mutate(status = as.character(rep(c(1,0), each = 20)), .after = "ID")
+
+```
+
+### 12.6.13 (c) (30 pts)
+
+Your collaborator wants to know which genes difer the most
+across the two groups. Suggest a way to answer this question,
+and apply it here.
+
+What we can first do is cut our dendrogram to form
+two groups. These groups will correspond to the
+experminatl groups we are intersted in comparing.
+
+We can perform a differential expression analysis (t-test) for each gene.
+
+For each gene a t-test is performed comparing
+the expression values between the two groups.
+The t-test checks if there is a significant difference in gene expression 
+between the two groups for each individual gene. The null hypothesis 
+is that the mean expression level is the same in both groups, 
+and the alternative hypothesis is that they are different.
+We then iterate over each row (gene) of the transposed data and run 
+the t-test for each gene.
+
+
+Since you're testing many genes at once, there's a risk of obtaining false 
+positives due to multiple comparisons. 
+The Benjamini-Hochberg (BH) procedure adjusts the p-values to control
+the false discovery rate (FDR).
+
+The p.adjust() function applies this correction to the original p-values
+to account for the fact that you are testing many hypotheses at once.
+```{r}
 
 # Transpose the data to cluster on samples
 data_transposed <- t(data)
@@ -223,28 +783,50 @@ data_transposed <- t(data)
 # Compute the correlation distance (1 - correlation)
 cor_dist <- 1 - cor(data_transposed)
 
-# Perform hierarchical clustering using the correlation distance
+# Perform hierarchical clustering using the "complete" linkage method
 hclust_res <- hclust(as.dist(cor_dist), method = "complete")
 
-# Convert the hclust object into a data frame suitable for ggplot
-dendro_data <- dendro_data(hclust_res)
+# Cut the dendrogram to form two groups
+groups <- cutree(hclust_res, k = 2)  # Two groups
 
-# Create the dendrogram plot using ggplot2 with expanded X-axis
-ggplot(segment(dendro_data), aes(x, y, xend = xend, yend = yend)) +
-  geom_segment(size = 1, color = "darkblue") +
-  theme_minimal() +
-  labs(title = "Hierarchical Clustering Dendrogram", x = "Samples", y = "Height") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 8),  # Rotate x-axis labels for clarity
-        axis.ticks.x = element_blank(),  # Remove x-axis ticks
-        plot.margin = margin(1, 1, 1, 3, "cm")) +  # Increase right margin to allow for space
-  scale_x_continuous(expand = c(0.05, 0.05))  # Adjust spacing between branches
+# Perform differential expression analysis (t-test) for each gene
+p_values <- apply(data_transposed, 1, function(gene_expression) {
+  # Perform t-test between the two groups for each gene
+  t_test_result <- t.test(gene_expression ~ groups)
+  return(t_test_result$p.value)
+})
+
+# Adjust p-values for multiple testing (e.g., using the Benjamini-Hochberg procedure)
+adjusted_p_values <- p.adjust(p_values, method = "BH")
+
+# Create a data frame of results
+results <- data.frame(
+  Gene = rownames(data_transposed),
+  P_Value = p_values,
+  Adjusted_P_Value = adjusted_p_values
+)
+
+# Sort the results by adjusted p-value to find the most significant genes
+results <- results[order(results$Adjusted_P_Value), ]
+
+# Display the top genes that are most different between the two groups
+head(results)
+
+
 ```
 
-Do the genes separate
-the samples into the two groups? Do your results depend on the
-type of linkage used?
+```{r}
 
-### 12.6.13 (b) (30 pts)
-### PCA and UMAP (30 pts)
-### 12.6.13 (c) (30 pts)
+# Select the top 10 most differentially expressed genes based on adjusted p-values
+top_genes <- head(results$Gene, 10)
+
+# Extract expression data for these genes
+top_gene_data <- data_transposed[top_genes, ]
+
+# Create a heatmap of the top genes
+pheatmap(top_gene_data, cluster_rows = TRUE, cluster_cols = TRUE,
+         show_rownames = TRUE, show_colnames = TRUE,
+         scale = "row", main = "Top 10 Differentially Expressed Genes")
+```
+
 
