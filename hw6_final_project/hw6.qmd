@@ -4,7 +4,7 @@ subtitle: "Due Mar 22, 2025 @ 11:59PM"
 author: "Nathaniel Boyle and 006525153"
 date: today
 format:
-  html:
+  pdf:
     theme: cosmo
     embed-resources: true
     number-sections: true
@@ -20,7 +20,7 @@ knitr:
     # fig.height: 4
     message: FALSE
     cache: false
-    warning: false
+    warning: FALSE
 ---
 
 Load R libraries.
@@ -43,27 +43,43 @@ if (!requireNamespace("glmnet", quietly = TRUE)) {
 if (!requireNamespace("dplyr", quietly = TRUE)) {
   install.packages("dplyr", repos = "https://cloud.r-project.org/")
 }
+if (!requireNamespace("FactoMineR", quietly = TRUE)) {
+  install.packages("FactoMineR", repos = "https://cloud.r-project.org/")
+}
+if (!requireNamespace("factoextra", quietly = TRUE)) {
+  install.packages("factoextra", repos = "https://cloud.r-project.org/")
+}
+# Core libraries for data manipulation and visualization
+library(tidyverse)  # for data manipulation and visualization 
+library(tidymodels) # A framework for building machine learning models
+library(readr)      # Functions for reading and writing data
+library(ggplot2)    # for creating visualizations
+library(ggdendro)   # visualize hierarchical clustering results using dendrograms
 
-library(tidyverse)
-library(tidymodels)
-library(readr)
-library(tswge)
-library(ggplot2)
-library(ggdendro)
-library(glmnet)
-library(yardstick)
-library(workflows)
-library(parsnip)
-library(tidyclust)
-library(RcppHungarian)
-library(xgboost)
-library(caret)
-library(dplyr)
-library(randomForest)
-library(stats)
-library(reshape2)
-library(gridExtra)
-library(pheatmap)
+# Machine learning and statistical modeling libraries
+library(glmnet)     # Implements LASSO and Ridge regression
+library(yardstick)  # evaluating machine learning models
+library(workflows)  # Facilitates building and managing workflows for machine learning tasks
+library(parsnip)    # Part of `tidymodels` for specifying and fitting models
+library(randomForest) # Implements the random forest algorithm
+library(xgboost)    # Implements the gradient boosting machine (GBM) algorithm
+library(caret)      # for training and evaluating machine learning models
+
+# Time series and clustering libraries
+library(tswge)      # For time series analysis
+library(tidyclust)  # Provides tools for clustering tasks
+library(RcppHungarian) # Implements the Hungarian algorithm for solving problems
+library(dplyr)      # For data manipulation,
+
+# Data transformation and visualization utilities
+library(reshape2)   # Provides functions for reshaping data (e.g., melting and casting)
+library(gridExtra)  # Facilitates arranging multiple plots in a grid layout
+library(pheatmap)   # For creating heatmaps with advanced customization options
+
+# Dimensionality reduction and visualization libraries
+library(umap)       # Implements the UMAP 
+library(FactoMineR) # A package for multivariate data analysis (e.g., PCA)
+library(factoextra) # Functions for visualizing the results of PCA
 
 ```
 
@@ -104,7 +120,6 @@ tplot <- function(vec) {
   df <- data.frame(X = vec, t = seq_along(vec))
   ggplot(data = df, aes(x = t, y = X)) +geom_line()
 }
-
 
 ```
 The **autocorrelation** at lag $\ell$ is the correlation of all pairs $(v_t, v_{t-\ell})$ that are $\ell$ trading days apart. These sizable correlations give us confidence that past values will be helpful in predicting the future.
@@ -154,7 +169,7 @@ The data set is already split into train (before Jan 1st, 1980, $n_{\text{train}
 
 <!-- Include `day_of_week` as a predictor in the models. -->
 
-In general, we will tune the lag $L$ to acheive best forecasting performance. In this project, we would fix $L=5$. That is we always use the previous five trading days' data to forecast today's `log trading volume`.
+In general, we will tune the lag $L$ to achieve best forecasting performance. In this project, we would fix $L=5$. That is we always use the previous five trading days' data to forecast today's `log trading volume`.
 
 Pay attention to the nuance of splitting time series data for cross validation. Study and use the [`time-series`](https://www.tidymodels.org/learn/models/time-series/) functionality in tidymodels. Make sure to use the same splits when tuning different machine learning algorithms.
 
@@ -213,6 +228,7 @@ model <- lm(log_volume ~ BaselinePrediction, data = test_data)
 # Get the R^2 value
 summary(model)$r.squared
 ```
+The test R^2 value of this baseline model is 0.35.
 
 ### Autoregression (AR) forecaster (30 pts)
 
@@ -251,13 +267,16 @@ M <- cbind(
 # Create the vector y (the target variable, which is log_volume from L+1 to T)
 y <- log_volume[(L+1):T]
 
-# Fit the OLS model using the lm() function (exclude intercept in the formula since it's already included in M)
+# Fit the OLS model using the lm() function (exclude intercept in the formula
+# since it's already included in M)
 model <- lm(y ~ M - 1)  # '-1' removes the intercept term (since it's already in M)
 
 # View the model coefficients
 summary(model)
 
 ```
+R^2 multiple is 0.47.
+Adjusted R^2 is 0.47.
 
 - Tune AR(5) with elastic net (lasso + ridge) regularization using all 3 features on the training data, and evaluate the test performance. 
 
@@ -318,6 +337,12 @@ cv_model
 # Plot the cross-validation curve
 plot(cv_model)
 
+# Extract the cross-validation R-squared values
+cv_r_squared <- 1 - cv_model$cvm / mean((y_train - mean(y_train))^2)
+
+# Print the max cv R-squared value
+print(max(cv_r_squared))
+
 
 # Predict on the test set
 y_pred <- predict(cv_model, X_test, s = "lambda.min")
@@ -327,10 +352,12 @@ rss <- sum((y_test - y_pred)^2)
 tss <- sum((y_test - mean(y_test))^2)
 r_squared <- 1 - (rss / tss)
 
-# Print the R^2 value
+# Print the test R^2 value
 r_squared
 
 ```
+The CV R^2 value of the baseline model is 0.57
+The test R^2 value of this model is 0.41
 
 - Hint: [Workflow: Lasso](https://ucla-biostat-212a.github.io/2025winter/slides/06-modelselection/workflow_lasso.html) is a good starting point.
 
@@ -342,6 +369,9 @@ r_squared
 
 # Create lagged features for log_volume, DJIA_return, and log_volatility
 L <- 5  # We will use AR(5) model, so L = 5
+
+# Suppress deprecated warning
+options(warn = -1)  # Suppress all warnings
 
 NYSE_lagged <- NYSE %>%
   mutate(
@@ -402,13 +432,20 @@ rf_tune <- train(
 # View the best tuned parameters
 print(rf_tune$bestTune)
 
-#our best forest model was with mtry 6
+# Print the best model's cross-validation R-squared
+best_r_squared <- max(rf_tune$results$Rsquared)
+cat("Best Cross-validation R-squared for Random Forest: ", best_r_squared, "\n")
+
+# turn warnings back on
+options(warn = 0) 
+
+# our best forest model was with mtry 6
 # this means 6 variables considered each split provided
 # the best outcome
 
 ```
 ```{r}
-#evaluate model perofmrance
+#evaluate model performance
 
 # Make predictions on the test set
 y_pred_rf <- predict(rf_tune, X_test)
@@ -424,6 +461,7 @@ print(r_squared_rf)
 #found R^2 is 0.4, lower than previous models.
 
 ```
+The test R^2 of the Random forest is 0.40
 
 - Hint: [Workflow: Random Forest for Prediction](https://ucla-biostat-212a.github.io/2025winter/slides/08-tree/workflow_rf_reg.html) is a good starting point.
 
@@ -552,14 +590,15 @@ print(paste("XGBoost Test R²:", xgb_test_r2))
 
 | Method | CV $R^2$ | Test $R^2$ |
 |:------:|:------:|:------:|:------:|
-| Baseline | | | |
-| AR(5) | | | |
-| Random Forest | | | |
-| Boosting | | | |
+| Baseline |0.57|0.35|
+| AR(5) |0.565|0.41|
+| Random Forest |0.573|0.40|
+| Boosting |0.52|0.41|
+
 
 ## ISL Exercise 12.6.13 (90 pts)
 On the book website, www.statlearning.com, there is a gene expression data set (Ch12Ex13.csv) that consists of 40 tissue samples with
-measurements on 1,000 genes. The frst 20 samples are from healthy
+measurements on 1,000 genes. The first 20 samples are from healthy
 patients, while the second 20 are from a diseased group.
 
 (a) Load in the data using read.csv(). You will need to select
@@ -567,12 +606,9 @@ header = F.
 
 ```{r}
 #load dataset
-
-# URL to the CSV file
 url <- "http://www.statlearning.com/s/Ch12Ex13.csv"
+ch12Ex13 <- read_csv(url, col_names = paste("ID", 1:40))
 
-# Load the dataset directly from the URL, ignore header
-data <- read.csv(url, header = F)
 
 # Check the first few rows of the data
 head(data)
@@ -580,76 +616,63 @@ head(data)
 ```
 
 
-(b) Apply hierarchical clustering to the samples using correlationbased
+(b) Apply hierarchical clustering to the samples using correlation based
 distance, and plot the dendrogram.
 
 ```{r}
+#set up hierarchical clustering model (average linkage)
 
-# Compute the correlation matrix
-correlation_matrix <- cor(t(data))
+set.seed(123) #set seed for reproducability
 
-# Convert the correlation matrix into a distance matrix (1 - correlation)
-dist_matrix <- as.dist(1 - correlation_matrix)
+data_transposed <- as.data.frame(t(ch12Ex13)) #transpose data
+  
+hc_spec <- hier_clust(
+  # num_clusters = 3
+  linkage_method = "average"
+)
 
-# Perform hierarchical clustering
-hc <- hclust(dist_matrix)
+hc_fit <- hc_spec |>
+  fit(~.,
+      data = data_transposed
+    )
 
-# Convert the hierarchical clustering object to a data frame suitable for ggplot
-dendrogram_data <- as.dendrogram(hc)
+hc_fit |>
+  summary()
 
-# Plot the dendrogram using ggplot2
-ggdendrogram(dendrogram_data, rotate = FALSE, theme_dendro = TRUE) + 
-  labs(title = "Hierarchical Clustering Dendrogram", 
-       x = "Samples", 
-       y = "Height") + 
-  theme_minimal() + 
-  theme(panel.background = element_blank(),  # Remove the grey background
-        axis.text.x = element_text(size = 12, angle =45),    # Adjust axis text size if needed
-        axis.title = element_text(size = 14)) +
-  scale_x_continuous(breaks = seq(0, nrow(data), by = 50))  # Display every 100th tick# Adjust axis title size
+hc_fit$fit |> plot(sub = "")
 
 ```
 
 Do the genes separate
 the samples into the two groups?
 
-From what it looks like we can see at least two distinct groups around sample
-No. 600 to 750.
+Yes we can see clearly that the samples are divided into two groups. Samples 1-
+20 are in one cluster, while samples 21-40 are in another cluster.
 
 ```{r}
 #different linkage methods
 
-# Create a list of methods for hierarchical clustering
-methods <- c("complete", "single", "average", "ward.D", "centroid")
+set.seed(123) # set seed for reproducibility
 
-# Function to create a dendrogram plot for each method
-create_dendrogram <- function(method, dist_matrix) {
-  # Perform hierarchical clustering with the specified method
-  hc <- hclust(dist_matrix, method = method)
+# Define the list of linkage methods
+linkage_methods <- c("complete", "single", "average", "ward.D", "centroid")
+
+# Iterate through the linkage methods and plot the clustering results
+par(mfrow = c(1, 1)) # Arrange the plots in a grid (2 rows, 3 columns)
+
+for (method in linkage_methods) {
+  hc_spec <- hier_clust(
+    linkage_method = method
+  )
+
+  hc_fit <- hc_spec |>
+    fit(~.,
+        data = data_transposed
+      )
   
-  # Convert the hierarchical clustering object to a data frame suitable for ggplot
-  dendrogram_data <- as.dendrogram(hc)
-  
-  # Plot the dendrogram using ggplot2
-  p <- ggdendrogram(dendrogram_data, rotate = FALSE, theme_dendro = TRUE) + 
-    labs(title = paste(method), 
-         x = "Samples", 
-         y = "Height") + 
-    theme_minimal() + 
-    theme(panel.background = element_blank(),  # Remove the grey background
-          axis.text.x = element_text(size = 12, angle = 45, hjust = 1),  # Rotate only x-axis labels
-          axis.title = element_text(size = 14)) +  # Adjust axis title size
-    scale_x_continuous(breaks = seq(0, nrow(data), by = 100))  # Display every 100th tick
-  
-  return(p)
+  # Plot the dendrogram for the current linkage method
+  hc_fit$fit |> plot(main = paste("Linkage Method:", method))
 }
-
-# Create a list of dendrogram plots for each method
-dendrogram_plots <- lapply(methods, create_dendrogram, dist_matrix = dist_matrix)
-
-# Arrange the plots in a grid
-grid.arrange(grobs = dendrogram_plots, ncol = 2)  # 2 columns for the layout
-
 
 ```
 
@@ -657,104 +680,76 @@ grid.arrange(grobs = dendrogram_plots, ncol = 2)  # 2 columns for the layout
 Do your results depend on the
 type of linkage used?
 
-It still appears that there are 2 distinct groups of some sort present in all the
-different linkage types. However how these groups are presented are each a
-little different.
+It still appears that there are 2 distinct groups of some sort present every
+linkage type tested here. Some methods flip where each group is located on the
+dendrogram, but the samples themselves still appear to be in the original groups
+that the "average" method used.
 
 ### PCA and UMAP (30 pts)
 
 Now we want to see the clusters from the genes using a PCA map
-and a UMAP.
+and a UMAP. We can see there is a clear clustering of 2 groups from both the
+UMAP and the PCA graphs. This helps us confirm there is a distinct difference
+between these two groups we saw from the dendrogram.
 
 ```{r}
-# PCA Maps
+# Hierarchical clustering (average linkage)
+set.seed(123) # set seed for reproducibility
 
-# Standardize the data (center and scale)
-data_scaled <- scale(data)
+# Add the "status" labels: first 20 "healthy", next 20 "diseased"
+status <- c(rep("healthy", 20), rep("diseased", 20))
+
+# Check the status labels
+head(status)
 
 # Perform PCA
-pca_result <- prcomp(data_scaled)
+pca_result <- prcomp(data_transposed, center = TRUE, scale. = TRUE)
 
-# Extract the PCA results (first two components)
-pca_data <- data.frame(pca_result$x)
+# Create PCA data frame
+pca_data <- data.frame(pca_result$x) # Extract PCA components
+pca_data$Status <- factor(status) # Add "status" to the PCA data frame
 
-# Assuming you have some known groupings (e.g., based on hierarchical clustering), 
-# you can assign cluster labels to each sample (e.g., for two groups).
-# You can use hierarchical clustering to decide the groups or use a known column.
-# Example: Let's assume you want to color points by hierarchical clustering:
-
-# Perform clustering again with a chosen method (e.g., complete linkage)
-hc <- hclust(dist_matrix, method = "complete")
-
-# Cut the tree into two clusters
-clusters <- cutree(hc, k = 2)  # Assuming you want 2 clusters
-
-# Add the cluster labels to the PCA data
-pca_data$Cluster <- factor(clusters)
-
-# Plot the PCA results using ggplot2
-library(ggplot2)
-ggplot(pca_data, aes(x = PC1, y = PC2, color = Cluster)) +
+# PCA plot with "status" coloring
+ggplot(pca_data, aes(x = PC1, y = PC2, color = Status)) +
   geom_point(size = 3) +
-  labs(title = "PCA of Gene Expression Data",
-       x = "Principal Component 1",
-       y = "Principal Component 2") +
-  theme_minimal() +
-  scale_color_manual(values = c("blue", "red"))  # Customize the colors as needed
+  labs(title = "PCA of the Data", x = "Principal Component 1", y = "Principal Component 2") +
+  theme_minimal()
 
 ```
+
+
 ```{r}
-# UMAP
-# Load the necessary library for UMAP
-library(umap)
+# UMAP Plot
 
-# Perform UMAP on the scaled data
-umap_result <- umap(data_scaled)
+# Perform UMAP
+umap_result <- umap(data_transposed)
 
-# Extract UMAP results (first two components)
-umap_data <- data.frame(UMAP1 = umap_result$layout[, 1], 
-                        UMAP2 = umap_result$layout[, 2])
+# Create UMAP data frame
+umap_data <- data.frame(umap_result$layout)
 
-# Assuming you have cluster labels from hierarchical clustering (as before)
-umap_data$Cluster <- factor(clusters)  # Use the clusters from hierarchical clustering
+# Rename columns for clarity
+colnames(umap_data) <- c("UMAP1", "UMAP2")  # Rename the UMAP dimensions
 
-# Plot the UMAP results using ggplot2
-library(ggplot2)
-ggplot(umap_data, aes(x = UMAP1, y = UMAP2, color = Cluster)) +
+# Add "status" to the UMAP data frame
+umap_data$Status <- factor(status)
+
+# UMAP plot with "status" coloring
+ggplot(umap_data, aes(x = UMAP1, y = UMAP2, color = Status)) +
   geom_point(size = 3) +
-  labs(title = "UMAP of Gene Expression Data",
-       x = "UMAP 1",
-       y = "UMAP 2") +
-  theme_minimal() +
-  scale_color_manual(values = c("blue", "red"))  # Customize the colors as needed
-
-```
-```{r}
-# Test block
-
-transposed_data <- data |>
-  t()|>
-  as.data.frame()|>
-  as_tibble()|>
-  rename(ID = rowname)
-
-
-names(transposed_data) <- c("ID", paste(seq(1,1000),""))
-
-transposed_data <- transposed_data |>
-  mutate(status = as.character(rep(c(1,0), each = 20)), .after = "ID")
+  labs(title = "UMAP of the Data", x = "UMAP Dimension 1", y = "UMAP Dimension 2") +
+  theme_minimal()
 
 ```
 
 ### 12.6.13 (c) (30 pts)
 
-Your collaborator wants to know which genes difer the most
+Your collaborator wants to know which genes differ the most
 across the two groups. Suggest a way to answer this question,
 and apply it here.
 
 What we can first do is cut our dendrogram to form
 two groups. These groups will correspond to the
-experminatl groups we are intersted in comparing.
+experimental groups we are interested in comparing.
 
 We can perform a differential expression analysis (t-test) for each gene.
 
@@ -767,66 +762,47 @@ and the alternative hypothesis is that they are different.
 We then iterate over each row (gene) of the transposed data and run 
 the t-test for each gene.
 
-
-Since you're testing many genes at once, there's a risk of obtaining false 
-positives due to multiple comparisons. 
-The Benjamini-Hochberg (BH) procedure adjusts the p-values to control
-the false discovery rate (FDR).
-
-The p.adjust() function applies this correction to the original p-values
-to account for the fact that you are testing many hypotheses at once.
 ```{r}
 
-# Transpose the data to cluster on samples
-data_transposed <- t(data)
+# Add status to the data (assuming `status` is already defined: "healthy" and "diseased")
+# We assume `data_transposed` has genes as columns and samples as rows
 
-# Compute the correlation distance (1 - correlation)
-cor_dist <- 1 - cor(data_transposed)
+# Create a data frame to hold the t-test results
+t_test_results <- data.frame(Gene = colnames(data_transposed), 
+                             P_Value = NA, 
+                             Diff_Mean = NA)
 
-# Perform hierarchical clustering using the "complete" linkage method
-hclust_res <- hclust(as.dist(cor_dist), method = "complete")
+# Perform the t-test for each gene
+for (gene in colnames(data_transposed)) {
+  # Perform t-test comparing "healthy" vs. "diseased"
+  t_test <- t.test(data_transposed[status == "healthy", gene], 
+                   data_transposed[status == "diseased", gene])
+  
+  # Store the p-value and the mean difference in the results
+  t_test_results[t_test_results$Gene == gene, "P_Value"] <- t_test$p.value
+  t_test_results[t_test_results$Gene == gene, "Diff_Mean"] <- 
+    mean(data_transposed[status == "diseased", gene]) - 
+    mean(data_transposed[status == "healthy", gene])
+}
 
-# Cut the dendrogram to form two groups
-groups <- cutree(hclust_res, k = 2)  # Two groups
+# Sort by p-value (smallest to largest) to identify the most significant genes
+t_test_results_sorted <- t_test_results[order(t_test_results$P_Value), ]
 
-# Perform differential expression analysis (t-test) for each gene
-p_values <- apply(data_transposed, 1, function(gene_expression) {
-  # Perform t-test between the two groups for each gene
-  t_test_result <- t.test(gene_expression ~ groups)
-  return(t_test_result$p.value)
-})
-
-# Adjust p-values for multiple testing (e.g., using the Benjamini-Hochberg procedure)
-adjusted_p_values <- p.adjust(p_values, method = "BH")
-
-# Create a data frame of results
-results <- data.frame(
-  Gene = rownames(data_transposed),
-  P_Value = p_values,
-  Adjusted_P_Value = adjusted_p_values
-)
-
-# Sort the results by adjusted p-value to find the most significant genes
-results <- results[order(results$Adjusted_P_Value), ]
-
-# Display the top genes that are most different between the two groups
-head(results)
+# Display the top 10 most significant genes
+head(t_test_results_sorted, 10)
 
 
 ```
 
 ```{r}
+library(pheatmap)
 
-# Select the top 10 most differentially expressed genes based on adjusted p-values
-top_genes <- head(results$Gene, 10)
+pheatmap(data_transposed, cluster_rows = FALSE, cluster_cols = T, scale ="row",
+         annotiation_colors = list(status = c(disease ="orange", healthy = "black",
+                                              color = colorRampPalette(c("navy", "white", "red"))(50))))
+         
 
-# Extract expression data for these genes
-top_gene_data <- data_transposed[top_genes, ]
 
-# Create a heatmap of the top genes
-pheatmap(top_gene_data, cluster_rows = TRUE, cluster_cols = TRUE,
-         show_rownames = TRUE, show_colnames = TRUE,
-         scale = "row", main = "Top 10 Differentially Expressed Genes")
 ```
 
 

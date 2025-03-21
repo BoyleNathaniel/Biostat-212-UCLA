@@ -1,0 +1,11 @@
+---
+title: "test"
+format: html
+---
+
+| Method | CV $R^2$ | Test $R^2$ |
+|:------:|:------:|:------:|:------:|
+| Baseline |0.57|0.35|
+| AR(5) |0.57|0.41|
+| Random Forest |0.57|0.40|
+| Boosting |0.52 |0.41|
